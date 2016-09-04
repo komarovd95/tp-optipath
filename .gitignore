@@ -1,0 +1,7 @@
+/.gradle
+/.idea
+/frontend/bower_components
+/frontend/node_modules
+/frontend/.gradle
+/frontend/build
+

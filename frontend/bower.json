@@ -1,0 +1,20 @@
+{
+  "name": "tp-frontend",
+  "version": "0.0.1",
+  "description": "Simple frontend for optimal paths on city map",
+  "homepage": "",
+  "license": "MIT",
+  "private": false,
+  "author": "Dmitry Komarov <dmitry.komarov1995@gmail.com>",
+  "contributors": [
+    "Alexey Skokov <alexskokov95@gmail.com>",
+    "Anastasia Kuzennaya <4ervya4-ok@mail.ru>",
+    "Dmitry Komarov <dmitry.komarov1995@gmail.com>",
+    "Tamara Kudryavtseva <toma.kudryavtseva@yandex.ru>"
+  ],
+  "dependencies": {
+    "jquery": "^3.1.0",
+    "bootstrap": "^3.3.7",
+    "angular": "^1.5.8"
+  }
+}
