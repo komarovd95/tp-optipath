@@ -21,7 +21,7 @@ const del = require('del');
 
 const paths = {
     src: {
-        html: "./src/assets/*.html",
+        html: "./src/*.html",
         img: "./src/images/*.{gif,svg,png,jpg}",
         js: "./src/js/**/*.js",
         styles: "./src/styles/*.{css,scss}"

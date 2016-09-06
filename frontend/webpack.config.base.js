@@ -4,7 +4,7 @@ const path = require('path');
 module.exports = {
     entry: {
         app: [
-            path.join(process.cwd(), "src/js/", 'app.jsx')
+            path.join(process.cwd(), "src/js/", 'index.jsx')
         ]
     },
     output: {
