@@ -1,3 +1,4 @@
 rootProject.name = 'tp-optipath'
 include 'frontend'
+include 'backend'
 
