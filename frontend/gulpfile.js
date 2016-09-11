@@ -98,6 +98,8 @@ gulp.task("webpack", function(callback) {
 
 gulp.task("watch", function() {
     gulp.watch(paths.src.html, ["assets"]);
+
+    gulp.watch(paths.src.styles, ["styles"]);
 });
 
 gulp.task("serve", function() {
@@ -121,7 +123,7 @@ gulp.task("serve", function() {
     browserSync.watch(paths.build + "**/*.*").on('change', browserSync.reload);
 });
 
-gulp.task("build", ["clean", "assets", "assets:vendor", "webpack", "styles"]);
+gulp.task("build", ["assets", "assets:vendor", "webpack", "styles"]);
 
 gulp.task("dev", ["build", "watch", "serve"]);
 
