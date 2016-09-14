@@ -26,6 +26,7 @@ gulp {
     colors = true
 }
 
+gulp_dev.environment = ["NODE_ENV": "development"]
 gulp_prod.environment = ["NODE_ENV": "production"]
 
 gulp_build.dependsOn "gulp_clean"

@@ -1,4 +1,5 @@
 import React from "react";
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 import { connect } from 'react-redux';
 
@@ -10,13 +11,13 @@ class App extends React.Component {
 
         return (
             <div>
-                { (pathname === '/signin' || pathname === '/signup')
-                    ? null : <Navigation isAuthenticated={this.props.isAuthenticated}/>
-                }
-
-                <div className="container">
-                    {React.cloneElement(this.props.children)}
-                </div>
+                <Navigation isAuthenticated={this.props.isAuthenticated}/>
+                <ReactCSSTransitionGroup component="div"
+                                         transitionName="fade-out"
+                                         transitionEnterTimeout={600}
+                                         transitionLeaveTimeout={600}>
+                    {React.cloneElement(this.props.children, { key: pathname })}
+                </ReactCSSTransitionGroup>
             </div>
         )
     }
