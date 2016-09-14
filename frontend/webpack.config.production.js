@@ -1,7 +1,7 @@
 const webpack = require('webpack');
 const config = require('./webpack.config.base');
 
-config.output.filename = 'app/index-[chunkhash:10].js';
+config.output.filename = 'app/index.js';
 
 config.plugins = [
     new webpack.optimize.OccurenceOrderPlugin(true),
