@@ -19,7 +19,7 @@ module.exports = {
             test: /\.jsx?/,
             exclude: /(node_modules|bower_components)/,
             include: [path.join(process.cwd(), "src/js/")],
-            loaders: ['babel?presets[]=react,presets[]=es2015']
+            loaders: ['babel?presets[]=react,presets[]=es2015,presets[]=stage-2']
         }]
     }
 };

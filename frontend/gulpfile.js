@@ -24,7 +24,8 @@ const paths = {
         html: "./src/*.html",
         img: "./src/images/*.{gif,svg,png,jpg}",
         js: "./src/js/**/*.js",
-        styles: "./src/styles/*.{css,scss}"
+        styles: "./src/styles/*.{css,scss}",
+        fonts: "./src/fonts/*.*"
     },
     build: "./build/"
 };
@@ -45,6 +46,11 @@ gulp.task("clean", function() {
 gulp.task("assets", function() {
     return gulp.src(paths.src.html)
         .pipe(gulp.dest(paths.build));
+});
+
+gulp.task("assets:fonts", function() {
+    return gulp.src(paths.src.fonts)
+        .pipe(gulp.dest(paths.build + "fonts/"));
 });
 
 gulp.task("assets:vendor", function() {
@@ -123,7 +129,7 @@ gulp.task("serve", function() {
     browserSync.watch(paths.build + "**/*.*").on('change', browserSync.reload);
 });
 
-gulp.task("build", ["assets", "assets:vendor", "webpack", "styles"]);
+gulp.task("build", ["assets", "assets:vendor", "assets:fonts", "webpack", "styles"]);
 
 gulp.task("dev", ["build", "watch", "serve"]);
 

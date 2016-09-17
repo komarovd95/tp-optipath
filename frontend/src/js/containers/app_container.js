@@ -24,8 +24,10 @@ class App extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { auth } = state.appReducer;
-    return auth;
+    const { isAuthenticated } = state.signIn;
+    return {
+        isAuthenticated
+    };
 }
 
 export default connect(mapStateToProps)(App)
