@@ -1,12 +1,11 @@
 import React from 'react';
+import {Link} from 'react-router';
 
-import { Link } from 'react-router';
+import NavLink from './nav_link';
 
-import NavLink from '../components/nav_link';
-
-export default class Navigation extends React.Component {
+export default class NavBar extends React.Component {
     render() {
-        const { isAuthenticated } = this.props;
+        const { isAuthenticated, user } = this.props;
 
         return (
             <nav className="navbar navbar-inverse navbar-static-top">
@@ -42,8 +41,23 @@ export default class Navigation extends React.Component {
                                         </p>
                                     </li>
                                 </ul>
-                              )
-                            : null
+                            )
+                            : (
+                                <ul className="nav navbar-nav navbar-right">
+                                    <li className="dropdown">
+                                        <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button"
+                                           aria-haspopup="true" aria-expanded="false">
+                                            <span className="glyphicon glyphicon-user" style={{marginRight: "10px"}}/>
+                                            {user.username} <span className="caret" />
+                                        </a>
+                                        <ul className="dropdown-menu">
+                                            <li><Link to="/me">Мой профиль</Link></li>
+                                            <li><Link to="/routes">Мои маршруты</Link></li>
+                                        </ul>
+                                    </li>
+                                    <li><Link to="/logout">Выйти</Link></li>
+                                </ul>
+                            )
                         }
                     </div>
                 </div>

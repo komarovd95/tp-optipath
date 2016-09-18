@@ -3,8 +3,6 @@ const config = require('./webpack.config.base');
 
 config.entry.app = ['webpack/hot/dev-server', 'webpack-hot-middleware/client'].concat(config.entry.app);
 
-config.output.filename = 'index.js';
-
 config.plugins = [
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.NoErrorsPlugin(),

@@ -1,4 +1,4 @@
-import { SIGNIN_REQUEST, SIGNIN_SUCCESS, SIGNIN_FAILURE } from '../constants/signin';
+import { SIGNIN_REQUEST, SIGNIN_SUCCESS, SIGNIN_FAILURE, PRINCIPAL_REQUEST } from '../constants/signin';
 
 const INITIAL_STATE = {
     user: null,
@@ -21,7 +21,7 @@ export default function(state = INITIAL_STATE, action) {
         case SIGNIN_SUCCESS:
             return {
                 ...state,
-                user: action.payload.data.user,
+                user: action.payload,
                 error: null,
                 isAuthenticated: true,
                 isFetching: false
@@ -34,6 +34,15 @@ export default function(state = INITIAL_STATE, action) {
                 error: action.payload.data || action.payload.message,
                 isAuthenticated: false,
                 isFetching: false
+            };
+
+        case PRINCIPAL_REQUEST:
+            return {
+                ...state,
+                user: null,
+                error: null,
+                isAuthenticated: false,
+                isFetching: true
             };
 
         default:

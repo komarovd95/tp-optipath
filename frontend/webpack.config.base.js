@@ -9,7 +9,7 @@ module.exports = {
     },
     output: {
         path: path.join(process.cwd(), "./build/"),
-        publicPath: '/app/'
+        filename: 'app/index.js'
     },
     resolve: {
         extensions: ['', '.js', '.jsx']

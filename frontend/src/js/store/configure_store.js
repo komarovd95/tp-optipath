@@ -1,6 +1,6 @@
-import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
 
-import thunkMiddleware from 'redux-thunk'
+import promiseMiddleware from 'redux-promise';
 
 import appReducer from '../reducers/app_reducer';
 
@@ -10,7 +10,7 @@ export default function configureStore(initialState = {}) {
 
 function getMiddleware() {
     return (process.env.NODE_ENV === 'production')
-        ? applyMiddleware(thunkMiddleware)
-        : compose(applyMiddleware(thunkMiddleware),
+        ? applyMiddleware(promiseMiddleware)
+        : compose(applyMiddleware(promiseMiddleware),
             window.devToolsExtension ? window.devToolsExtension() : f => f);
 }

@@ -1,16 +1,21 @@
-import { SIGNIN_REQUEST, SIGNIN_SUCCESS, SIGNIN_FAILURE } from '../constants/signin';
-
 import axios from 'axios';
+import querystring from 'querystring';
+
+import { SIGNIN_REQUEST, SIGNIN_SUCCESS, SIGNIN_FAILURE, PRINCIPAL_REQUEST } from '../constants/signin';
+import transformUrl from '../util/call_api';
+
 
 export function signIn(credentials) {
+    const { username, password } = credentials;
+
     const config = {
         headers: {
-            'Content-Type' : 'application/x-www-form-urlencoded',
-            'Authorization' : 'Basic ' + window.btoa(credentials.login + ':' + credentials.password)
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Access-Control-Allow-Origin': '*'
         }
     };
 
-    const request = axios.post('/login', {}, config);
+    const request = axios.post(transformUrl('/signin'), querystring.stringify({ username, password }), config);
 
     return {
         type: SIGNIN_REQUEST,
@@ -29,5 +34,14 @@ export function signInFailure(error) {
     return {
         type: SIGNIN_FAILURE,
         payload: error
+    }
+}
+
+export function principalRequest() {
+    const request = axios.get(transformUrl('/user'));
+
+    return {
+        type: PRINCIPAL_REQUEST,
+        payload: request
     }
 }

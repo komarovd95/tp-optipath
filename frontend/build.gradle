@@ -30,3 +30,5 @@ gulp_dev.environment = ["NODE_ENV": "development"]
 gulp_prod.environment = ["NODE_ENV": "production"]
 
 gulp_build.dependsOn "gulp_clean"
+gulp_dev.dependsOn "gulp_clean"
+gulp_prod.dependsOn "gulp_clean"

@@ -17,6 +17,8 @@ const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
 const notifier = require('node-notifier');
 const del = require('del');
+const url = require('url');
+const proxy = require('proxy-middleware');
 
 
 const paths = {
@@ -109,6 +111,9 @@ gulp.task("watch", function() {
 });
 
 gulp.task("serve", function() {
+    var proxyOptions = url.parse('http://localhost:8080');
+    proxyOptions.route = '/external';
+
     browserSync.init({
         server: {
             baseDir: paths.build,
@@ -117,7 +122,8 @@ gulp.task("serve", function() {
                     publicPath: webpackSettings.output.publicPath,
                     stats: { colors: true }
                 }),
-                webpackHotMiddleware(bundler)
+                webpackHotMiddleware(bundler),
+                proxy(proxyOptions)
             ],
             routes: {
                 "/bower_components": "./bower_components",

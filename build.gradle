@@ -1,3 +1,13 @@
 group 'ssau.ru'
 version '0.0.1'
 
+task copyFiles(type: Sync) {
+    from project('frontend').file('build')
+    into project('backend').file('src/main/resources/static')
+}
+
+copyFiles.dependsOn ':frontend:gulp_prod'
+
+task runApplication(dependsOn: ['copyFiles', ':backend:bootRun']) {
+    println 'Start application...'
+}

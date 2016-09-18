@@ -1,10 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { reduxForm } from 'redux-form';
+import { reduxForm, SubmissionError } from 'redux-form';
+import { browserHistory } from 'react-router';
 
 import validateField from '../util/validate_field';
 
-import { signIn, signInSuccess, signInFailure } from '../actions/signin_actions';
+import { signIn, signInSuccess, signInFailure, principalRequest } from '../actions/signin_actions';
+import transformUrl from '../util/call_api';
 
 import SignInForm from '../components/signin_form';
 
@@ -54,37 +56,42 @@ function validate(values) {
 
 
 const validateAndSignIn = (values, dispatch) => {
-    console.log('Login...');
-    console.log(values);
+    return dispatch(signIn(values))
+        .then(response => {
+            console.log("START");
+            console.log(response);
 
-    return new Promise((resolve, reject) => {
-        dispatch(signIn(values))
-            .then(response => {
-                const data = response.payload.data;
+            const status = response.error ? response.payload.response.status : response.payload.status;
 
-                if (response.payload.status != 200) {
-                    dispatch(signInFailure(response.payload));
-                    reject(data);
+            if (status === 200) {
+                dispatch(principalRequest())
+                    .then(principalResponse => {
+                        if (principalResponse.payload.status === 200) {
+                            dispatch(signInSuccess(principalResponse.payload.data));
+                            const url = response.payload.request.responseURL;
+                            browserHistory.push(transformUrl(url));
+                        } else {
+                            dispatch(signInFailure(principalResponse.payload));
+                            alert('Не удалось войти в систему. Повторите запрос позже');
+                        }
+                    });
+            } else {
+                dispatch(signInFailure(response.payload));
+                if (status === 401) {
+                    throw new SubmissionError({ _error : response.payload.response.data.message });
                 } else {
-                    // session storage
-                    dispatch(signInSuccess(response.payload));
-                    resolve();
+                    alert('Непредвиденная ошибка на сервере. Повторите запрос позже');
                 }
-            });
-    })
+            }
+        });
 };
 
 
-const mapDispatchToProps = (dispatch) => {
+function mapDispatchToProps() {
     return {
         signInUser: validateAndSignIn
     }
-};
-
-const SignInContainer = reduxForm({
-    form: 'SignInForm',
-    validate
-});
+}
 
 function mapStateToProps(state) {
     return {
@@ -92,4 +99,10 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SignInContainer(SignInForm));
+const SignInContainer = reduxForm({
+    form: 'SignInForm',
+    validate
+})(SignInForm);
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignInContainer);
