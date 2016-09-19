@@ -4,7 +4,7 @@ import promiseMiddleware from 'redux-promise';
 
 import appReducer from '../reducers/app_reducer';
 
-export default function configureStore(initialState = {}) {
+export default function configureStore(initialState) {
     return createStore(appReducer, initialState, getMiddleware());
 }
 

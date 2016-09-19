@@ -58,9 +58,6 @@ function validate(values) {
 const validateAndSignIn = (values, dispatch) => {
     return dispatch(signIn(values))
         .then(response => {
-            console.log("START");
-            console.log(response);
-
             const status = response.error ? response.payload.response.status : response.payload.status;
 
             if (status === 200) {
@@ -68,6 +65,8 @@ const validateAndSignIn = (values, dispatch) => {
                     .then(principalResponse => {
                         if (principalResponse.payload.status === 200) {
                             dispatch(signInSuccess(principalResponse.payload.data));
+                            window.sessionStorage.setItem('path-user',
+                                JSON.stringify(principalResponse.payload.data));
                             const url = response.payload.request.responseURL;
                             browserHistory.push(transformUrl(url));
                         } else {

@@ -26,6 +26,7 @@ module.exports = {
                 minCss: false,
                 rev: false,
                 useMin: ['production'],
+                maps: false,
                 watch: {
                     scripts: false,
                     styles: false

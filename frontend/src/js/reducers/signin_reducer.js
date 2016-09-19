@@ -1,9 +1,9 @@
 import { SIGNIN_REQUEST, SIGNIN_SUCCESS, SIGNIN_FAILURE, PRINCIPAL_REQUEST } from '../constants/signin';
 
 const INITIAL_STATE = {
-    user: null,
+    user: JSON.parse(window.sessionStorage.getItem('path-user')),
     error: null,
-    isAuthenticated: false,
+    isAuthenticated: !!window.sessionStorage.getItem('path-user'),
     isFetching: false
 };
 

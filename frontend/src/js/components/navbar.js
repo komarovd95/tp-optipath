@@ -5,11 +5,11 @@ import NavLink from './nav_link';
 
 export default class NavBar extends React.Component {
     render() {
-        const { isAuthenticated, user } = this.props;
+        const { isAuthenticated, user, pathname } = this.props;
 
         return (
             <nav className="navbar navbar-inverse navbar-static-top">
-                <div className="container">
+                <div className="container-fluid">
                     <div className="navbar-header">
                         <Link to="/" className="navbar-brand">OptiPath</Link>
                         <button type="button" className="navbar-toggle collapsed" data-toggle="collapse"
@@ -34,7 +34,10 @@ export default class NavBar extends React.Component {
                         { isAuthenticated === false
                             ? (
                                 <ul className="nav navbar-nav navbar-right">
-                                    <li><Link to="/signin">Войти</Link></li>
+                                    {pathname !== '/signin'
+                                        ? (<li><Link to="/signin">Войти</Link></li>)
+                                        : ''
+                                    }
                                     <li>
                                         <p className="navbar-btn" style={{margin: "8px 15px"}}>
                                             <Link to="/signup" className="btn btn-success">Регистрация</Link>

@@ -3,9 +3,10 @@ import { connect } from 'react-redux';
 import Profile from '../components/profile';
 
 function mapStateToProps(state) {
-    const { user } = state.signIn;
+    const { signIn : { user }, tabs: { profileTab } } = state;
     return {
-        user
+        user,
+        currentTab: profileTab
     }
 }
 
