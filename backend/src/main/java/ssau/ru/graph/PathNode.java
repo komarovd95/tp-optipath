@@ -2,6 +2,7 @@ package ssau.ru.graph;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.springframework.data.rest.core.config.Projection;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
@@ -22,7 +23,7 @@ public class PathNode implements Serializable {
     private NodePosition position;
 
     @ManyToOne
-    @JoinColumn(name = "owner_graph")
+    @JoinColumn(name = "graph_owner")
     @JsonIgnore
     private PathGraph graph;
 
@@ -110,5 +111,12 @@ public class PathNode implements Serializable {
         public int getY() {
             return y;
         }
+    }
+
+
+
+    @Projection(name = "node_ids_only", types = PathNode.class)
+    public interface NodeIdsOnly {
+        Long getId();
     }
 }

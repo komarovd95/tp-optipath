@@ -43,15 +43,15 @@ public class BackendApplication implements CommandLineRunner {
         PathNode node = new PathNode(graph, new PathNode.PathLight(20, 20), new PathNode.NodePosition(0, 10));
         PathNode node1 = new PathNode(graph, new PathNode.PathLight(15, 15), new PathNode.NodePosition(100, 100));
 
-        PathEdge edge = new PathEdge(graph, new PathEdge.EdgeInfo(node, node1));
+        PathEdge edge = new PathEdge(graph, node, node1);
         edgeRepository.save(edge);
 
         nodeRepository.save(node);
         nodeRepository.save(node1);
 
+        graph.addEdge(edge);
         graph.addNode(node);
         graph.addNode(node1);
-        graph.addEdge(edge);
         graph.setOwner(user);
         user.addPathGraph(graph);
         graphRepository.save(graph);
