@@ -1,9 +1,11 @@
 package ssau.ru;
 
 import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.module.SimpleSerializers;
+import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
+import com.fasterxml.jackson.databind.ser.std.BeanSerializerBase;
+import com.fasterxml.jackson.databind.util.NameTransformer;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurerAdapter;
@@ -32,10 +34,23 @@ public class RepositoryConfig extends RepositoryRestConfigurerAdapter {
 
             @Override
             public void setupModule(SetupContext context) {
-                SimpleSerializers serializers = new SimpleSerializers();
-                serializers.addSerializer(PathNode.class, new PathEdge.NodeSerializer());
-                context.addSerializers(serializers);
-q            }
+//                SimpleSerializers serializers = new SimpleSerializers();
+//                serializers.addSerializer(PathNode.class, new PathEdge.NodeSerializer());
+//                context.addSerializers(serializers);
+
+                context.addBeanSerializerModifier(new BeanSerializerModifier() {
+                    @Override
+                    public JsonSerializer<?> modifySerializer(SerializationConfig config, BeanDescription beanDesc,
+                                                              JsonSerializer<?> serializer) {
+                        beanDesc.
+                        if (beanDesc.getBeanClass().equals(PathNode.class)) {
+                            return new PathEdge.BeanIdOnlySerializer((BeanSerializerBase) serializer,
+                                    NameTransformer.NOP);
+                        }
+                        return serializer;
+                    }
+                });
+            }
         });
     }
 }

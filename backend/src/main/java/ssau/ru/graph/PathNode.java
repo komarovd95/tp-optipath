@@ -112,11 +112,4 @@ public class PathNode implements Serializable {
             return y;
         }
     }
-
-
-
-    @Projection(name = "node_ids_only", types = PathNode.class)
-    public interface NodeIdsOnly {
-        Long getId();
-    }
 }
