@@ -36,5 +36,10 @@ module.exports = {
         main: {
 
         }
-    }
+    },
+    copy: [{
+        src: './node_modules/vis/dist/img/network/*.*',
+        base: './node_modules/vis/dist/',
+        watch: false
+    }]
 };

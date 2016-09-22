@@ -5,18 +5,12 @@ export default class SidebarLink extends React.Component {
         tabName: React.PropTypes.string.isRequired
     };
 
-    handleClick(remoteClick, tabName) {
-        remoteClick(tabName);
-    }
-
     render() {
-        const { currentTab, tabName, onClick } = this.props;
-
-        console.log(currentTab + ' ' + tabName);
+        const { className, tabName, onClick } = this.props;
 
         return (
-            <li className={currentTab === tabName ? 'active' : ''}>
-                <a onClick={this.handleClick(onClick.bind(this), tabName)}>
+            <li className={className}>
+                <a role="button" onClick={onClick.bind(this, tabName)}>
                     {this.props.children}
                 </a>
             </li>

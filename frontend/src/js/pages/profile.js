@@ -8,11 +8,13 @@ export default class ProfilePage extends React.Component {
     render() {
         return (
             <div className="container-fluid react-animation">
-                <div className="row">
+                <div className="row profile-content">
                     <ProfileSidebarContainer />
                     <ProfileContainer>
                         <ProfileTab tabName="routes">
-                            <p>Hello</p>
+                            <div className="container-fluid">
+                                <p>Heyo</p>
+                            </div>
                         </ProfileTab>
                         <ProfileTab tabName="cars">
                             <p>Halo</p>

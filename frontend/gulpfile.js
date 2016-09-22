@@ -115,6 +115,8 @@ gulp.task("serve", function() {
     proxyOptions.route = '/external';
 
     browserSync.init({
+        injectChanges: true,
+        port: 3000,
         server: {
             baseDir: paths.build,
             middleware: [
@@ -124,12 +126,9 @@ gulp.task("serve", function() {
                 }),
                 webpackHotMiddleware(bundler),
                 proxy(proxyOptions)
-            ],
-            routes: {
-                "/bower_components": "./bower_components",
-                "/node_modules": "./node_modules"
-            }
-        }
+            ]
+        },
+        files: [paths.build + '*.css']
     });
 
     browserSync.watch(paths.build + "**/*.*").on('change', browserSync.reload);
@@ -137,7 +136,7 @@ gulp.task("serve", function() {
 
 gulp.task("build", ["assets", "assets:vendor", "assets:fonts", "webpack", "styles"]);
 
-gulp.task("dev", ["build", "watch", "serve"]);
+gulp.task("dev", ["build", "serve", "watch"]);
 
 gulp.task("default", ["dev"]);
 

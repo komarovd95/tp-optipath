@@ -1,17 +1,16 @@
 package ssau.ru.users;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import ssau.ru.graph.PathGraph;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "USERS")
@@ -34,9 +33,15 @@ public class PathUser {
     @JsonIgnore
     private Set<String> roles;
 
-    public PathUser() {}
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
+    private List<PathGraph> pathGraphs;
+
+    public PathUser() {
+        pathGraphs = new ArrayList<>();
+    }
 
     public PathUser(String username, String password, Collection<String> roles) {
+        this();
         this.username = username;
         this.setPassword(password);
         this.setRoles(roles);
@@ -68,5 +73,13 @@ public class PathUser {
 
     public void setRoles(Collection<String> roles) {
         this.roles = Collections.unmodifiableSet(new HashSet<>(roles));
+    }
+
+    public List<PathGraph> getPathGraphs() {
+        return Collections.unmodifiableList(pathGraphs);
+    }
+
+    public void addPathGraph(PathGraph graph) {
+        this.pathGraphs.add(Objects.requireNonNull(graph));
     }
 }

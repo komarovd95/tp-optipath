@@ -4,8 +4,12 @@ import {changeTab} from '../actions/profile_actions';
 
 import ProfileSidebar from '../components/profile_sidebar';
 
+function changeTabClick() {
+
+}
+
 function mapStateToProps(state) {
-    const { profileTab } = state.tabs;
+    const {profileTab} = state.tabs;
     return {
         currentTab: profileTab
     }
@@ -13,7 +17,9 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        tabChangeClick: tabName => dispatch(changeTab(tabName))
+        tabChangeClick: function(tabName)  {
+            dispatch(changeTab(tabName));
+        }
     }
 }
 
