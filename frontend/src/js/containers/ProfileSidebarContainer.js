@@ -1,12 +1,8 @@
 import {connect} from 'react-redux';
 
-import {changeTab} from '../actions/profile_actions';
+import {changeTab} from '../actions/ProfileActions';
 
-import ProfileSidebar from '../components/profile_sidebar';
-
-function changeTabClick() {
-
-}
+import ProfileSidebar from '../components/ProfileSidebar';
 
 function mapStateToProps(state) {
     const {profileTab} = state.tabs;
@@ -17,9 +13,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        tabChangeClick: function(tabName)  {
-            dispatch(changeTab(tabName));
-        }
+        tabChangeClick: tabName => dispatch(changeTab(tabName))
     }
 }
 

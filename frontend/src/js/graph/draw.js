@@ -54,6 +54,9 @@ export function draw() {
         interaction: {
             navigationButtons: true,
             keyboard: true
+        },
+        manipulation: {
+            enabled: true
         }
     };
 

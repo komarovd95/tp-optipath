@@ -1,7 +1,6 @@
 import React from 'react';
-import {Link} from 'react-router';
 
-import Animation from './animation';
+import Animation from './Animation';
 
 export default class Profile extends React.Component {
     render() {
@@ -11,7 +10,7 @@ export default class Profile extends React.Component {
 
         return (
             <div className="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 profile-main">
-                <h1>{user.username}</h1>
+                <h1>{user && user.username}</h1>
                 <Animation>
                     {tab}
                 </Animation>

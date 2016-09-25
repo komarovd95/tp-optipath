@@ -1,4 +1,4 @@
-import {CHANGE_TAB} from '../constants/profile';
+import {CHANGE_TAB} from '../constants/ProfileActionTypes';
 
 const INITIAL_STATE = {
     profileTab: 'routes'

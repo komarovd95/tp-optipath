@@ -1,28 +1,29 @@
 package ssau.ru.graph;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import org.springframework.data.rest.core.config.Projection;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Entity
 @Table(name = "NODES")
 public class PathNode implements Serializable {
     @Id @GeneratedValue
-    @JsonInclude
     private Long id;
 
     @Embedded
+    @NotNull @Valid
     private PathLight light;
 
     @Embedded
+    @NotNull
     private NodePosition position;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "graph_owner")
     @JsonIgnore
     private PathGraph graph;
@@ -66,16 +67,24 @@ public class PathNode implements Serializable {
     @Embeddable
     public static class PathLight {
         @Column(name = "red_phase")
-        @Min(15)
+        @Min(15) @Max(150)
         int redPhase;
 
         @Column(name = "green_phase")
-        @Min(10) @Max(90)
+        @Min(15) @Max(90)
         int greenPhase;
 
         public PathLight() {}
 
         public PathLight(int redPhase, int greenPhase) {
+//            if (redPhase < 15 && redPhase > 150) {
+//                throw new IllegalArgumentException("Red phase must be in [15; 150]. Given " + redPhase);
+//            }
+//
+//            if (greenPhase < 15 && greenPhase > 90) {
+//                throw new IllegalArgumentException("Green phase must be in [15; 90]. Given " + redPhase);
+//            }
+
             this.redPhase = redPhase;
             this.greenPhase = greenPhase;
         }

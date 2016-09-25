@@ -1,6 +1,6 @@
 import React from 'react';
 
-import SignInContainer from '../containers/signin_container';
+import SignInContainer from '../containers/SignInContainer';
 
 export default class SignIn extends React.Component {
     goBack() {
@@ -14,7 +14,7 @@ export default class SignIn extends React.Component {
                     <span>&times;</span>
                 </button>
                 <div className="content">
-                    <SignInContainer />
+                    <SignInContainer location={this.props.location}/>
                 </div>
             </div>
         )

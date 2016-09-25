@@ -2,15 +2,17 @@ package ssau.ru;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.csrf.CsrfFilter;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
 import ssau.ru.users.PathUser;
@@ -27,7 +29,8 @@ import java.io.IOException;
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String[] PATHS = {
-            "/", "/vendor/**", "/img/**", "/*.js", "/*.css", "/app/**", "/fonts/**", "/login", "/logout", "/user", "/signin"
+            "/", "/vendor/**", "/img/**", "/*.js", "/*.css", "/app/**", "/fonts/**",
+            "/login", "/logout", "/user", "/signin"
     };
 
     private final PathUserDetailsService userDetailsService;
@@ -40,14 +43,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .formLogin().loginPage("/signin").failureHandler(failureHandler()).and()
-                .logout().permitAll().and()
+                .formLogin().loginPage("/signin").failureHandler(loginFailure()).and()
+                .logout().logoutRequestMatcher(new AntPathRequestMatcher("/signout"))
+                    .logoutSuccessHandler(logoutHandler()).permitAll().and()
                 .authorizeRequests()
                     .antMatchers(PATHS).permitAll()
+                    .antMatchers(HttpMethod.POST, "/api/pathUsers").permitAll()
                 .anyRequest().authenticated().and()
                 .csrf().disable();
-//                .csrfTokenRepository(csrfTokenRepository()).and()
-//                    .addFilterAfter(csrfHeaderFilter(), CsrfFilter.class);
     }
 
     @Override
@@ -55,7 +58,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userDetailsService).passwordEncoder(PathUser.PASSWORD_ENCODER);
     }
 
-    private AuthenticationFailureHandler failureHandler() {
+    private LogoutSuccessHandler logoutHandler() {
+        return (request, response, authentication) -> {
+
+        };
+    }
+
+    private AuthenticationFailureHandler loginFailure() {
         return (request, response, exception) -> {
             if (exception instanceof BadCredentialsException) {
                 response.sendError(401, "Некорректная пара логин/пароль");

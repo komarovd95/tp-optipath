@@ -1,9 +1,9 @@
 import { connect } from 'react-redux';
 
-import Profile from '../components/profile';
+import Profile from '../components/Profile';
 
 function mapStateToProps(state) {
-    const { signIn : { user }, tabs: { profileTab } } = state;
+    const { auth : { user }, tabs: { profileTab } } = state;
     return {
         user,
         currentTab: profileTab

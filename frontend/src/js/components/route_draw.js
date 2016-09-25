@@ -9,7 +9,7 @@ export default class RouteDraw extends React.Component {
 
     render() {
         return (
-            <div id="my-graph"></div>
+            <div id="my-graph" />
         )
     }
 }

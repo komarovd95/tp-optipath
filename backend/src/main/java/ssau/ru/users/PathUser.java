@@ -1,7 +1,9 @@
 package ssau.ru.users;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ssau.ru.graph.PathGraph;
@@ -21,30 +23,37 @@ public class PathUser {
     private Long id;
 
     @Column(name = "user_name", unique = true, length = 20, nullable = false)
-    @NotNull @Size(min = 4, max = 20) @Pattern(regexp = "^[a-zA-Z0-9]+$")
+    @NotNull @Size(min = 5, max = 20) @Pattern(regexp = "^[a-zA-Z0-9]+$")
     private String username;
 
     @Column(name = "user_pass", nullable = false)
-    @JsonIgnore
-    @NotNull
+    @NotNull @JsonIgnore
     private String password;
 
     @ElementCollection(fetch = FetchType.EAGER)
+    @Size(min = 1)
     @JsonIgnore
     private Set<String> roles;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<PathGraph> pathGraphs;
 
-    public PathUser() {
+    private PathUser() {
         pathGraphs = new ArrayList<>();
     }
 
-    public PathUser(String username, String password, Collection<String> roles) {
+    public PathUser(String username, String password, String... roles) {
         this();
         this.username = username;
-        this.setPassword(password);
-        this.setRoles(roles);
+        this.setPassword(Objects.requireNonNull(password));
+        this.setRoles(Objects.requireNonNull(roles));
+    }
+
+    @JsonCreator
+    public PathUser(@JsonProperty("username") String username,
+                    @JsonProperty("password") String password) {
+        this(username, password, "ROLE_USER");
     }
 
     public Long getId() {
@@ -59,20 +68,24 @@ public class PathUser {
         this.username = username;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
 
+    @JsonProperty("password")
     public void setPassword(CharSequence password) {
         this.password = PASSWORD_ENCODER.encode(password);
     }
 
+    @JsonIgnore
     public Set<String> getRoles() {
         return roles;
     }
 
-    public void setRoles(Collection<String> roles) {
-        this.roles = Collections.unmodifiableSet(new HashSet<>(roles));
+    @JsonProperty("roles")
+    public void setRoles(String[] roles) {
+        this.roles = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(roles)));
     }
 
     public List<PathGraph> getPathGraphs() {

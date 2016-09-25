@@ -37,26 +37,32 @@ public class BackendApplication implements CommandLineRunner {
 	@Override
     @Transactional
 	public void run(String... args) throws Exception {
-	    PathUser user = new PathUser("diman", "diman", Collections.singleton("ROLE_USER"));
+	    PathUser user = new PathUser("diman", "diman", "ROLE_USER");
 
         PathGraph graph = new PathGraph();
-        PathNode node = new PathNode(graph, new PathNode.PathLight(20, 20), new PathNode.NodePosition(0, 10));
+        user.addPathGraph(graph);
+        graph.setOwner(user);
+
+        PathNode node = new PathNode(graph, new PathNode.PathLight(15, 20), new PathNode.NodePosition(0, 10));
+        graph.addNode(node);
+        node.setGraph(graph);
+
         PathNode node1 = new PathNode(graph, new PathNode.PathLight(15, 15), new PathNode.NodePosition(100, 100));
+        graph.addNode(node1);
+        node1.setGraph(graph);
 
         PathEdge edge = new PathEdge(graph, node, node1);
-        edgeRepository.save(edge);
-
-        nodeRepository.save(node);
-        nodeRepository.save(node1);
-
+        edge.setCoverType(CoverType.BREAKSTONE);
+        edge.setLength(100);
+        edge.setLanes(3);
         graph.addEdge(edge);
-        graph.addNode(node);
-        graph.addNode(node1);
-        graph.setOwner(user);
-        user.addPathGraph(graph);
-        graphRepository.save(graph);
+        edge.setGraph(graph);
 
         userRepository.save(user);
+        graphRepository.save(graph);
+        nodeRepository.save(node);
+        nodeRepository.save(node1);
+        edgeRepository.save(edge);
 
         for (PathUser u : userRepository.findAll()) {
             System.out.println(u.getUsername() + " : " + u.getPathGraphs());

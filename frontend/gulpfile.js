@@ -7,6 +7,7 @@ const plumber = require('gulp-plumber');
 const notify = require('gulp-notify');
 const gulpIf = require('gulp-if');
 const sourcemaps = require('gulp-sourcemaps');
+const autoprefixer = require('gulp-autoprefixer');
 const sass = require('gulp-sass');
 const concat = require('gulp-concat');
 const cleanCSS = require('gulp-clean-css');
@@ -75,6 +76,7 @@ gulp.task("styles", function() {
         }))
         .pipe(gulpIf(isDev, sourcemaps.init()))
         .pipe(sass())
+        .pipe(autoprefixer())
         .pipe(concat('main.css'))
         .pipe(gulpIf(!isDev, cleanCSS()))
         .pipe(gulpIf(isDev, sourcemaps.write()))

@@ -1,12 +1,10 @@
 import React from 'react';
 
 export default class SidebarLink extends React.Component {
-    static propTypes = {
-        tabName: React.PropTypes.string.isRequired
-    };
-
     render() {
-        const { className, tabName, onClick } = this.props;
+        const { tabName, onClick, currentTab, activeClass } = this.props;
+
+        const className = tabName === currentTab ? activeClass : '';
 
         return (
             <li className={className}>
@@ -17,3 +15,10 @@ export default class SidebarLink extends React.Component {
         )
     }
 }
+
+SidebarLink.propTypes = {
+    tabName: React.PropTypes.string.isRequired,
+    onClick: React.PropTypes.func.isRequired,
+    currentTab: React.PropTypes.string,
+    activeClass: React.PropTypes.string
+};

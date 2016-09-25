@@ -5,6 +5,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import ssau.ru.users.PathUser;
 
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.*;
@@ -19,20 +21,23 @@ public class PathGraph {
     @Size(min = 1, max = 50) @Pattern(regexp = "^[\\p{L}\\d\\s]+$")
     private String name;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "graph_owner")
     @JsonIgnore
     private PathUser owner;
 
-    @OneToMany(mappedBy = "graph")
+    @OneToMany(mappedBy = "graph", cascade = CascadeType.ALL)
+    @Size(min = 2) @Valid
     private List<PathNode> nodes;
 
-    @OneToMany(mappedBy = "graph")
+    @OneToMany(mappedBy = "graph", cascade = CascadeType.ALL)
+    @Size(min = 1) @Valid
     private List<PathEdge> edges;
 
     @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
+    @Past
     private Date updateAt;
 
     public PathGraph() {

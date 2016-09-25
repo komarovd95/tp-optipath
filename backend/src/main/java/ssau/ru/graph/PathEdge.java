@@ -3,6 +3,9 @@ package ssau.ru.graph;
 import com.fasterxml.jackson.annotation.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "EDGES")
@@ -10,17 +13,34 @@ public class PathEdge {
     @Id @GeneratedValue
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "edge_from")
     private PathNode from;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "edge_to")
     private PathNode to;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "graph_owner")
+    @JsonIgnore
     private PathGraph graph;
+
+    @Column(name = "edge_length")
+    @Min(100) @Max(50000)
+    private int length;
+
+    @Column(name = "edge_lanes")
+    @Min(1) @Max(10)
+    private int lanes;
+
+    @Column(name = "edge_cover")
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private CoverType coverType;
+
+    @Column(name = "edge_directed")
+    private boolean directed;
 
     public PathEdge() {}
 
@@ -58,6 +78,38 @@ public class PathEdge {
 
     public void setGraph(PathGraph graph) {
         this.graph = graph;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
+    }
+
+    public int getLanes() {
+        return lanes;
+    }
+
+    public void setLanes(int lanes) {
+        this.lanes = lanes;
+    }
+
+    public CoverType getCoverType() {
+        return coverType;
+    }
+
+    public void setCoverType(CoverType coverType) {
+        this.coverType = coverType;
+    }
+
+    public boolean isDirected() {
+        return directed;
+    }
+
+    public void setDirected(boolean directed) {
+        this.directed = directed;
     }
 
     @JsonProperty("from")
