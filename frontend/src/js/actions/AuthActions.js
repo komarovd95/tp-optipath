@@ -149,15 +149,7 @@ function signOutRequest() {
 }
 
 function signOutSuccess() {
-    browserHistory.setState({
-        isSignedOut: true
-    });
-    // browserHistory.push({
-    //     pathname: '/',
-    //     state: {
-    //         isSignedOut: true
-    //     }
-    // });
+    browserHistory.replace('/');
 
     return {
         type: actionTypes.SIGNOUT_SUCCESS

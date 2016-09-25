@@ -4,7 +4,7 @@ import SidebarLink from './SidebarLink';
 
 export default class ProfileSidebar extends React.Component {
     render() {
-        const { currentTab, tabChangeClick } = this.props;
+        const { currentTab, tabChangeClick, signOutUser } = this.props;
 
         return (
             <div className="col-sm-3 col-md-2 sidebar">
@@ -21,7 +21,7 @@ export default class ProfileSidebar extends React.Component {
                                  currentTab={currentTab} onClick={tabChangeClick}>
                         Сменить пароль
                     </SidebarLink>
-                    <SidebarLink tabName="logout" onClick={tabChangeClick}>
+                    <SidebarLink tabName="logout" onClick={signOutUser}>
                         Выйти
                     </SidebarLink>
                 </ul>

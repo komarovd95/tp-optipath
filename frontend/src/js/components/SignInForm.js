@@ -7,9 +7,6 @@ export default class SignInForm extends React.Component {
     render() {
         const { handleSubmit, submitting, error, signInUser, location } = this.props;
 
-        console.log('FORM');
-        console.log(location);
-
         const nextPath = location.state ? location.state.nextPathname : undefined;
 
         return (

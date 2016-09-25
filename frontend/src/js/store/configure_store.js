@@ -1,7 +1,6 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 
 import promiseMiddleware from 'redux-promise';
-import signOutMiddleware from '../middlewares/SignOutMiddleware';
 
 import appReducer from '../reducers/AppReducer';
 
@@ -10,7 +9,7 @@ export default function configureStore(initialState) {
 }
 
 function getMiddleware() {
-    const middlewares = applyMiddleware(promiseMiddleware, signOutMiddleware);
+    const middlewares = applyMiddleware(promiseMiddleware);
 
     return (process.env.NODE_ENV === 'production')
         ? middlewares

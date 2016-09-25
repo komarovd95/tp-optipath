@@ -77,9 +77,9 @@ export default class NavBar extends React.Component {
                                         </ul>
                                     </li>
                                     <li>
-                                        <Link to="/" onClick={signOutUser}>
+                                        <a role="button" onClick={signOutUser}>
                                             Выйти
-                                        </Link>
+                                        </a>
                                     </li>
                                 </ul>
                             )
