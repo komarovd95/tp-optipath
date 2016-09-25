@@ -30,6 +30,11 @@ export default class NavBar extends React.Component {
                                     Мои маршруты
                                 </NavLink>
                             }
+                            { isAuthenticated &&
+                                <NavLink to="/cars" activeClassName="active">
+                                    Мои автомобили
+                                </NavLink>
+                            }
                             <NavLink to="/about" activeClassName="active">
                                 О программе
                             </NavLink>

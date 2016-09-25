@@ -1,5 +1,6 @@
 import React from "react";
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import shortid from 'shortid';
 
 export default class Animation extends React.Component {
     render() {
@@ -8,7 +9,8 @@ export default class Animation extends React.Component {
                                          transitionName="fade-out"
                                          transitionEnterTimeout={300}
                                          transitionLeaveTimeout={300}>
-                    {this.props.children}
+                    {React.cloneElement(this.props.children,
+                        { key : shortid.generate() })}
                 </ReactCSSTransitionGroup>
         )
     }
