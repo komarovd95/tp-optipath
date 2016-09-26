@@ -4,7 +4,7 @@ import { reduxForm } from 'redux-form';
 import { validateField } from '../util/FormUtil';
 import SignUpForm from '../components/SignUpForm';
 
-import { signUp } from '../actions/AuthActions';
+import { signUp, checkUsername } from '../actions/AuthActions';
 
 function validate(values) {
     const errors = {};
@@ -60,6 +60,10 @@ function validate(values) {
     return errors;
 }
 
+function asyncValidate(values, dispatch) {
+    return checkUsername(values.username, dispatch);
+}
+
 function mapDispatchToProps() {
     return {
         signUpUser: signUp
@@ -74,7 +78,9 @@ function mapStateToProps(state) {
 
 const SignUpContainer = reduxForm({
     form: 'SignUpForm',
-    validate
+    validate,
+    asyncValidate,
+    asyncBlurFields: [ 'username' ]
 })(SignUpForm);
 
 export default connect(mapStateToProps, mapDispatchToProps)(SignUpContainer);

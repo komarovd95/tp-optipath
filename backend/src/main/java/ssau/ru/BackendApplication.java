@@ -9,8 +9,6 @@ import ssau.ru.graph.*;
 import ssau.ru.users.PathUser;
 import ssau.ru.users.PathUserRepository;
 
-import java.util.Collections;
-
 @SpringBootApplication
 public class BackendApplication implements CommandLineRunner {
     @Autowired
@@ -37,7 +35,7 @@ public class BackendApplication implements CommandLineRunner {
 	@Override
     @Transactional
 	public void run(String... args) throws Exception {
-	    PathUser user = new PathUser("diman", "diman", "ROLE_USER");
+	    PathUser user = new PathUser("diman", "diman", "ROLE_USER", "ROLE_ADMIN");
 
         PathGraph graph = new PathGraph();
         user.addPathGraph(graph);

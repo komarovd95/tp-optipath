@@ -1,0 +1,13 @@
+.glyphicon.normal-right-spinner {
+  animation: glyphicon-spin-r 2s infinite linear;
+}
+
+@keyframes glyphicon-spin-r {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(359deg);
+  }
+}

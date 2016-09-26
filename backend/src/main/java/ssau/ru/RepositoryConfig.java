@@ -7,6 +7,7 @@ import org.springframework.data.rest.core.event.ValidatingRepositoryEventListene
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurerAdapter;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import ssau.ru.graph.PathGraph;
 import ssau.ru.graph.PathNode;
 
 @Configuration
@@ -18,7 +19,7 @@ public class RepositoryConfig extends RepositoryRestConfigurerAdapter {
 
     @Override
     public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
-        config.exposeIdsFor(PathNode.class);
+        config.exposeIdsFor(PathNode.class, PathGraph.class);
     }
 
     @Override

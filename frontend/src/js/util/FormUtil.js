@@ -28,20 +28,30 @@ export function validateField(value, options) {
 }
 
 export function renderField(field) {
-    const { input, label, type, meta : { touched, error }, autoFocus } = field;
+    const {
+        input, label, type,
+        meta : { touched, error, asyncValidating },
+        autoFocus
+    } = field;
 
     const isError = touched && error;
+
+    //const renderError = error && error.map ? error : [error];
 
     return (
         <div className={`form-group ${isError ? "has-error has-feedback" : ""}`}>
             <label className="sr-only">{label}</label>
             <input {...input} placeholder={label} type={type}
                    className="form-control" autoFocus={autoFocus}/>
-            {isError && <span className="glyphicon glyphicon-remove form-control-feedback" />}
+            {asyncValidating ? (
+                <span className="glyphicon glyphicon-repeat form-control-feedback normal-right-spinner"/>
+            ) : (isError &&
+                <span className="glyphicon glyphicon-remove form-control-feedback" />
+            )}
             {isError &&
-            <ul className="alert alert-danger">
-                { error.map(e => (<li key={shortid.generate()}>{e}</li>))}
-            </ul>
+                <ul className="alert alert-danger">
+                    { error.map(e => (<li key={shortid.generate()}>{e}</li>))}
+                </ul>
             }
         </div>
     )

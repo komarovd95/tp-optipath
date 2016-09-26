@@ -171,3 +171,29 @@ export function signOut(dispatch) {
             }
         });
 }
+
+function checkUsernameRequest(username) {
+    const request = CallApi.get(`/api/pathUsers/search/findByUsername?username=${username}`);
+
+    return {
+        type: actionTypes.CHECK_USERNAME_REQUEST,
+        payload: request
+    }
+}
+
+export function checkUsername(username, dispatch) {
+    return dispatch(checkUsernameRequest(username))
+        .then(response => {
+            const status = response.payload.error
+                ? response.payload.response.status
+                : response.payload.status;
+
+            dispatch({
+                type: actionTypes.CHECK_USERNAME_ACCEPT
+            });
+
+            if (status === 200) {
+                throw { username: [`Имя ${username} уже занято`] };
+            }
+        });
+}

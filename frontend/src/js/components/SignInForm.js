@@ -5,7 +5,9 @@ import { renderField } from '../util/FormUtil';
 
 export default class SignInForm extends React.Component {
     render() {
-        const { handleSubmit, submitting, error, signInUser, location } = this.props;
+        const {
+            handleSubmit, submitting, error, signInUser, location, auth
+        } = this.props;
 
         const nextPath = location.state ? location.state.nextPathname : undefined;
 
@@ -27,6 +29,10 @@ export default class SignInForm extends React.Component {
 
                 <button className="btn btn-lg btn-primary btn-block" type="submit"
                         disabled={submitting}>
+                    { auth.isFetching && (
+                        <span className="glyphicon glyphicon-repeat normal-right-spinner"
+                              style={{ marginRight: '15px'}} />
+                    ) }
                     Войти
                 </button>
             </form>

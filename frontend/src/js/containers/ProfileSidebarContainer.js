@@ -6,8 +6,9 @@ import { changeTab } from '../actions/ProfileActions';
 import ProfileSidebar from '../components/ProfileSidebar';
 
 function mapStateToProps(state) {
-    const { profileTab } = state.tabs;
+    const { auth: { user }, tabs: { profileTab } } = state;
     return {
+        user,
         currentTab: profileTab
     }
 }

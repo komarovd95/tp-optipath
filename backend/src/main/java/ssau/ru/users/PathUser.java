@@ -2,10 +2,10 @@ package ssau.ru.users;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import ssau.ru.DomainObject;
 import ssau.ru.graph.PathGraph;
 
 import javax.persistence.*;
@@ -16,7 +16,7 @@ import java.util.*;
 
 @Entity
 @Table(name = "USERS")
-public class PathUser {
+public class PathUser extends DomainObject<Long> {
     public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
 
     @Id @GeneratedValue
@@ -32,7 +32,6 @@ public class PathUser {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Size(min = 1)
-    @JsonIgnore
     private Set<String> roles;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
@@ -78,12 +77,12 @@ public class PathUser {
         this.password = PASSWORD_ENCODER.encode(password);
     }
 
-    @JsonIgnore
+    @JsonProperty("roles")
     public Set<String> getRoles() {
         return roles;
     }
 
-    @JsonProperty("roles")
+    @JsonIgnore
     public void setRoles(String[] roles) {
         this.roles = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(roles)));
     }

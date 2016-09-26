@@ -1,24 +1,26 @@
 package ssau.ru.graph;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springframework.data.annotation.LastModifiedDate;
+import ssau.ru.DomainObject;
 import ssau.ru.users.PathUser;
 
 import javax.persistence.*;
 import javax.validation.Valid;
-import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.*;
 
 @Entity
-@Table(name = "GRAPHS", uniqueConstraints = @UniqueConstraint(columnNames = {"graph_name", "graph_owner"}))
-public class PathGraph {
-    @Id @GeneratedValue
+@Table(name = "GRAPHS", uniqueConstraints =
+            @UniqueConstraint(columnNames = {"graph_name", "graph_owner"}))
+public class PathGraph extends DomainObject<Long> {
+    @Id
+    @GeneratedValue
     private Long id;
 
     @Column(name = "graph_name", length = 50)
-    @Size(min = 1, max = 50) @Pattern(regexp = "^[\\p{L}\\d\\s]+$")
+    @Size(min = 1, max = 50)
+    @Pattern(regexp = "^[\\p{L}\\d\\s]+$")
     private String name;
 
     @ManyToOne(optional = false)
@@ -27,18 +29,14 @@ public class PathGraph {
     private PathUser owner;
 
     @OneToMany(mappedBy = "graph", cascade = CascadeType.ALL)
-    @Size(min = 2) @Valid
+    @Size(min = 2)
+    @Valid
     private List<PathNode> nodes;
 
     @OneToMany(mappedBy = "graph", cascade = CascadeType.ALL)
-    @Size(min = 1) @Valid
+    @Size(min = 1)
+    @Valid
     private List<PathEdge> edges;
-
-    @Column(name = "updated_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    @LastModifiedDate
-    @Past
-    private Date updateAt;
 
     public PathGraph() {
         nodes = new ArrayList<>();
@@ -87,19 +85,5 @@ public class PathGraph {
 
     public void addEdge(PathEdge edge) {
         edges.add(Objects.requireNonNull(edge));
-    }
-
-    public Date getUpdateAt() {
-        return updateAt == null ? null : new Date(updateAt.getTime());
-    }
-
-    public void setUpdateAt(Date date) {
-        this.updateAt = new Date(Objects.requireNonNull(date).getTime());
-    }
-
-    @PostPersist
-    @PostUpdate
-    private void update() {
-        this.updateAt = new Date();
     }
 }

@@ -90,6 +90,24 @@ export default function authReducer(state = INITIAL_STATE, action) {
                 isFetching: false
             };
 
+        case actionTypes.CHECK_USERNAME_REQUEST:
+            return {
+                ...state,
+                user: null,
+                error: null,
+                isAuthenticated: false,
+                isFetching: true
+            };
+
+        case actionTypes.CHECK_USERNAME_ACCEPT:
+            return {
+                ...state,
+                user: null,
+                error: null,
+                isAuthenticated: false,
+                isFetching: false
+            };
+
         default:
             return state;
     }

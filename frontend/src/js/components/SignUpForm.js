@@ -5,7 +5,7 @@ import { renderField } from '../util/FormUtil';
 
 export default class SignUpForm extends React.Component {
     render() {
-        const { handleSubmit, submitting, error, signUpUser } = this.props;
+        const { handleSubmit, submitting, error, signUpUser, auth } = this.props;
 
         return (
             <form onSubmit={handleSubmit(signUpUser.bind(this))}>
@@ -27,6 +27,10 @@ export default class SignUpForm extends React.Component {
 
                 <button className="btn btn-lg btn-success btn-block" type="submit"
                         disabled={submitting}>
+                    { auth.isFetching && (
+                        <span className="glyphicon glyphicon-repeat normal-right-spinner"
+                              style={{ marginRight: '15px'}} />
+                    ) }
                     Регистрация
                 </button>
             </form>

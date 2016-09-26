@@ -28,6 +28,8 @@ public class PathUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException(username);
         }
 
+        System.out.println(getAuthorities(user.getRoles()));
+
         return new User(user.getUsername(), user.getPassword(), getAuthorities(user.getRoles()));
     }
 

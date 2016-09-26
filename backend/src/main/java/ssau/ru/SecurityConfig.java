@@ -30,7 +30,7 @@ import java.io.IOException;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String[] PATHS = {
             "/", "/vendor/**", "/img/**", "/*.js", "/*.css", "/app/**", "/fonts/**",
-            "/login", "/logout", "/user", "/signin"
+            "/login", "/logout", "/user", "/signin", "/signup"
     };
 
     private final PathUserDetailsService userDetailsService;
@@ -49,6 +49,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                     .antMatchers(PATHS).permitAll()
                     .antMatchers(HttpMethod.POST, "/api/pathUsers").permitAll()
+                    .antMatchers(HttpMethod.GET, "/api/pathUsers/search/findByUsername").permitAll()
+                    .antMatchers(HttpMethod.GET, "/api/pathUsers").hasRole("ADMIN")
                 .anyRequest().authenticated().and()
                 .csrf().disable();
     }

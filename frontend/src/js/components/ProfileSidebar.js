@@ -4,7 +4,9 @@ import SidebarLink from './SidebarLink';
 
 export default class ProfileSidebar extends React.Component {
     render() {
-        const { currentTab, tabChangeClick, signOutUser } = this.props;
+        const { user, currentTab, tabChangeClick, signOutUser } = this.props;
+
+        const isAdmin = user.roles.includes('ROLE_ADMIN');
 
         return (
             <div className="col-sm-3 col-md-2 sidebar">
@@ -17,6 +19,18 @@ export default class ProfileSidebar extends React.Component {
                                  currentTab={currentTab} onClick={tabChangeClick}>
                         Мои автомобили
                     </SidebarLink>
+                    { isAdmin && (
+                        <SidebarLink tabName="users" activeClass="active"
+                                     currentTab={currentTab} onClick={tabChangeClick}>
+                            Пользователи
+                        </SidebarLink>
+                    ) }
+                    { isAdmin && (
+                        <SidebarLink tabName="carsDB" activeClass="active"
+                                     currentTab={currentTab} onClick={tabChangeClick}>
+                            Автомобили (БД)
+                        </SidebarLink>
+                    ) }
                     <SidebarLink tabName="pass" activeClass="active"
                                  currentTab={currentTab} onClick={tabChangeClick}>
                         Сменить пароль
