@@ -9,7 +9,14 @@
     <link type="text/css" rel="stylesheet" href="./main.css">
 </head>
 <body>
-<div id="root"></div>
+<div id="root" style="height: 100%; padding-bottom: 50px; overflow-y: hidden"></div>
 <script type="text/javascript" src="./app/index.js"></script>
+<script type="text/javascript">
+    $(document).on('click', '.navbar-collapse.in', function(e) {
+        if($(e.target).is('a')) {
+            $(this).collapse('hide');
+        }
+    });
+</script>
 </body>
 </html>

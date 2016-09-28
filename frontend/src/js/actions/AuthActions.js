@@ -32,7 +32,7 @@ function signInSuccess(user) {
 
 function signInFailure(error) {
     return {
-        type: actionTypes.SIGNIN_SUCCESS,
+        type: actionTypes.SIGNIN_FAILURE,
         payload: error
     }
 }
@@ -63,8 +63,10 @@ export function signIn(redirectUrl = '/', values, dispatch) {
 
                         if (payload.status === 200) {
                             dispatch(signInSuccess(payload.data));
-                            window.sessionStorage.setItem('path-user',
-                                JSON.stringify(payload.data));
+                            if (window.sessionStorage) {
+                                window.sessionStorage.setItem('path-user',
+                                    JSON.stringify(payload.data));
+                            }
 
                             browserHistory.replace(redirectUrl);
                         } else {
@@ -73,7 +75,7 @@ export function signIn(redirectUrl = '/', values, dispatch) {
                         }
                     });
             } else {
-                dispatch(signInFailure(response.payload));
+                dispatch(signInFailure(response.payload.response.data));
                 if (status === 401) {
                     throw new SubmissionError({
                         _error : response.payload.response.data.message

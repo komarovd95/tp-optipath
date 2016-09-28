@@ -1,9 +1,9 @@
 import * as actionTypes from '../constants/AuthActionTypes';
 
 const INITIAL_STATE = {
-    user: JSON.parse(window.sessionStorage.getItem('path-user')),
+    user: window.sessionStorage && JSON.parse(window.sessionStorage.getItem('path-user')),
     error: null,
-    isAuthenticated: !!window.sessionStorage.getItem('path-user'),
+    isAuthenticated: window.sessionStorage && !!window.sessionStorage.getItem('path-user'),
     isFetching: false
 };
 
@@ -32,7 +32,7 @@ export default function authReducer(state = INITIAL_STATE, action) {
             return {
                 ...state,
                 user: null,
-                error: action.payload.data || action.payload.message,
+                error: action.data || action.message,
                 isAuthenticated: false,
                 isFetching: false
             };

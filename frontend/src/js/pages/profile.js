@@ -2,6 +2,8 @@ import React from 'react';
 
 import ProfileContainer from '../containers/profile_container';
 import ProfileSidebarContainer from '../containers/ProfileSidebarContainer';
+import UsersContainer from '../containers/UsersContainer';
+
 import ProfileTab from '../components/ProfileTab';
 
 export default class ProfilePage extends React.Component {
@@ -18,6 +20,9 @@ export default class ProfilePage extends React.Component {
                         </ProfileTab>
                         <ProfileTab tabName="cars">
                             <p>Halo</p>
+                        </ProfileTab>
+                        <ProfileTab tabName="users">
+                            <UsersContainer/>
                         </ProfileTab>
                     </ProfileContainer>
                 </div>

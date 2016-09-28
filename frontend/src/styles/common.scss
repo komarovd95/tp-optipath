@@ -1,3 +1,15 @@
+html, body {
+  height: 100%;
+}
+
+body {
+  padding-top: 50px;
+}
+
+.authenticated-component {
+  height: 100%;
+}
+
 .glyphicon.normal-right-spinner {
   animation: glyphicon-spin-r 2s infinite linear;
 }
@@ -9,5 +21,28 @@
 
   100% {
     transform: rotate(359deg);
+  }
+}
+
+.footer {
+  height: 50px;
+  background-color: rgb(34, 34, 34);
+  color: #9d9d9d;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  border: 1px solid #101010;
+}
+
+@media (max-width: 1024px) {
+  #root {
+    padding-bottom: 0 !important;
+  }
+
+  .footer {
+    display: none;
+  }
+
+  .sidebar {
+    bottom: 0;
   }
 }

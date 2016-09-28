@@ -6,6 +6,8 @@ export default class Profile extends React.Component {
     render() {
         const { user, currentTab } = this.props;
 
+        console.log('current tab:', currentTab);
+
         const tab = this.props.children.find(c => c.props.tabName === currentTab);
 
         console.log(tab);

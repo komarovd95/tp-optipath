@@ -1,0 +1,22 @@
+.user-list {
+  height: 100%;
+
+  .panel {
+    text-align: center;
+    height: 100%;
+  }
+
+  .panel-heading {
+    text-align: left;
+  }
+
+  .table {
+    text-align: left;
+  }
+
+  .pagination {
+    position: fixed;
+    left: 50%;
+    bottom: 60px;
+  }
+}

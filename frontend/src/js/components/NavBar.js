@@ -2,13 +2,18 @@ import React from 'react';
 import {Link} from 'react-router';
 
 import NavLink from './NavLink';
+import ProfileLink from './ProfileLink';
 
 export default class NavBar extends React.Component {
     render() {
-        const { isAuthenticated, user, pathname, signOutUser } = this.props;
+        const {
+            isAuthenticated, user, pathname, signOutUser, navigateToTab
+        } = this.props;
+
+        const isAdmin = isAuthenticated && user.roles.find(r => r === 'ROLE_ADMIN');
 
         return (
-            <nav className="navbar navbar-inverse navbar-static-top">
+            <nav className="navbar navbar-inverse navbar-fixed-top">
                 <div className="container-fluid">
                     <div className="navbar-header">
                         <Link to="/" className="navbar-brand">OptiPath</Link>
@@ -25,16 +30,6 @@ export default class NavBar extends React.Component {
                             <NavLink to="/route" activeClassName="active">
                                 Новый маршрут
                             </NavLink>
-                            { isAuthenticated &&
-                                <NavLink to="/routes" activeClassName="active">
-                                    Мои маршруты
-                                </NavLink>
-                            }
-                            { isAuthenticated &&
-                                <NavLink to="/cars" activeClassName="active">
-                                    Мои автомобили
-                                </NavLink>
-                            }
                             <NavLink to="/about" activeClassName="active">
                                 О программе
                             </NavLink>
@@ -80,6 +75,10 @@ export default class NavBar extends React.Component {
                                                 </Link>
                                             </li>
                                         </ul>
+                                        { isAdmin
+                                            ? adminDropDown(navigateToTab)
+                                            : userDropDown(navigateToTab)
+                                        }
                                     </li>
                                     <li>
                                         <a role="button" onClick={signOutUser}>
@@ -95,3 +94,65 @@ export default class NavBar extends React.Component {
         )
     }
 }
+
+const adminDropDown = (navClick) => {
+    return (
+        <ul className="dropdown-menu">
+            <li>
+                <ProfileLink tabName="routes" onClick={navClick}>
+                    Мой профиль
+                </ProfileLink>
+            </li>
+            <li role="separator" className="divider" />
+            <li>
+                <ProfileLink tabName="routes" onClick={navClick}>
+                    Мои маршруты
+                </ProfileLink>
+            </li>
+            <li>
+                <ProfileLink tabName="cars" onClick={navClick}>
+                    Мои автомобили
+                </ProfileLink>
+            </li>
+            <li role="separator" className="divider" />
+            <li>
+                <ProfileLink tabName="users" onClick={navClick}>
+                    Пользователи
+                </ProfileLink>
+            </li>
+            <li>
+                <ProfileLink tabName="carsDB" onClick={navClick}>
+                    Автомобили
+                </ProfileLink>
+            </li>
+            <li>
+                <ProfileLink tabName="routesDB" onClick={navClick}>
+                    Маршруты
+                </ProfileLink>
+            </li>
+        </ul>
+    )
+};
+
+const userDropDown = (navClick) => {
+    return (
+        <ul className="dropdown-menu">
+            <li>
+                <ProfileLink tabName="routes" onClick={navClick}>
+                    Мой профиль
+                </ProfileLink>
+            </li>
+            <li role="separator" className="divider" />
+            <li>
+                <ProfileLink tabName="routes" onClick={navClick}>
+                    Мои маршруты
+                </ProfileLink>
+            </li>
+            <li>
+                <ProfileLink tabName="cars" onClick={navClick}>
+                    Мои автомобили
+                </ProfileLink>
+            </li>
+        </ul>
+    )
+};

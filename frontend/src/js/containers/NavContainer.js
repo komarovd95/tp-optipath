@@ -2,6 +2,7 @@ import {connect} from 'react-redux';
 
 import NavBar from '../components/NavBar';
 import { signOut } from '../actions/AuthActions';
+import { navigateTab } from '../actions/ProfileActions';
 
 function mapStateToProps(state) {
     const {
@@ -18,7 +19,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        signOutUser: () => signOut(dispatch)
+        signOutUser: () => signOut(dispatch),
+        navigateToTab: tabName => dispatch(navigateTab(tabName))
     }
 }
 

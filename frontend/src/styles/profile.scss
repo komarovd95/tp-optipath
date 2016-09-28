@@ -21,11 +21,22 @@
 }
 
 .profile-content {
+  height: 100%;
+
   h1 {
     border-bottom: 1px solid #eee;
   }
 }
 
+.profile-main {
+  height: 100%;
+}
+
+.profile-tab {
+  padding-bottom: 80px;
+  padding-left: 0;
+  padding-right: 0;
+}
 
 @media (min-width: 768px) {
   .sidebar {
@@ -34,7 +45,7 @@
     padding: 20px;
     z-index: 1000;
     top: 51px;
-    bottom: 0;
+    bottom: 51px;
     left: 0;
     overflow-x: hidden;
     overflow-y: auto;

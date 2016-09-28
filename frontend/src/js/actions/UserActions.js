@@ -1,9 +1,16 @@
+import querystring from 'querystring';
+
 import * as userActions from '../constants/UserActionTypes';
 
 import { CallApi } from '../util/APIUtil';
 
 function userListRequest(pageable) {
-    const request = CallApi.get('/api/pathUsers', pageable);
+    console.log('pageable:', pageable);
+
+    const { number: page, size } = pageable;
+
+    const request = CallApi.get('/api/pathUsers?'
+        + querystring.stringify({ page, size }));
 
     return {
         type: userActions.USER_LIST_REQUEST,
@@ -11,10 +18,10 @@ function userListRequest(pageable) {
     }
 }
 
-function userListSuccess(users) {
+function userListSuccess(usersInfo) {
     return {
         type: userActions.USER_LIST_SUCCESS,
-        payload: users
+        payload: usersInfo
     }
 }
 
@@ -26,8 +33,27 @@ function userListFailure(error) {
 }
 
 export function userList(dispatch, pageable) {
-    return dispatch(userListRequest(pageable))
+    dispatch(userListRequest(pageable))
         .then(response => {
-            console.log(response);
+            const status = response.error
+                ? response.payload.response.status
+                : response.payload.status;
+
+            if (status === 200) {
+                console.log('success:', response);
+                dispatch(userListSuccess({
+                    data: response.payload.data._embedded.pathUsers,
+                    pageable: response.payload.data.page
+                }));
+            } else {
+                dispatch(userListFailure(response.payload));
+                alert('Ошибка на сервере. Повторите запрос позже');
+            }
         });
+}
+
+export function userListReset() {
+    return {
+        type: userActions.USER_LIST_RESET
+    }
 }

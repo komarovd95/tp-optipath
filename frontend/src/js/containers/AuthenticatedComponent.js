@@ -21,7 +21,7 @@ export default function requireAuthentication(Component) {
 
         render() {
             return (
-                <div>
+                <div className="react-animation">
                     {this.props.isAuthenticated && <Component {...this.props}/>}
                 </div>
             )

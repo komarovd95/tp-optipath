@@ -5,7 +5,7 @@ import shortid from 'shortid';
 export default class Animation extends React.Component {
     render() {
         return (
-                <ReactCSSTransitionGroup component="div"
+                <ReactCSSTransitionGroup //component="div"
                                          transitionName="fade-out"
                                          transitionEnterTimeout={300}
                                          transitionLeaveTimeout={300}>

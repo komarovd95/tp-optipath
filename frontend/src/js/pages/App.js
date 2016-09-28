@@ -8,11 +8,16 @@ export default class AppPage extends React.Component {
         const { pathname } = this.props.location;
 
         return (
-            <div>
+            <div style={{ height: '100%' }}>
                 <Navigation/>
                 <Animation>
                     {React.cloneElement(this.props.children, { key: pathname })}
                 </Animation>
+                <footer className="footer navbar-fixed-bottom">
+                    <div className="container-fluid">
+                        <span>Samara</span>
+                    </div>
+                </footer>
             </div>
         )
     }
