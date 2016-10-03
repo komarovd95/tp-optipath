@@ -16,7 +16,7 @@ export default class ListPaginate extends React.Component {
                            breakLabel={<span>...</span>}
                            breakClassName="break-me"
                            pageNum={this.props.maxPage}
-                           initialSelected={0}
+                           //initialSelected={0}
                            forceSelected={this.props.currentPage}
                            marginPagesDisplayed={2}
                            pageRangeDisplayed={5}

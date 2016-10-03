@@ -94,9 +94,11 @@ export function userListReset() {
     }
 }
 
-export function userEnableActions(actions) {
+export function userEnableActions(id, actions) {
     return {
         type: userActions.USER_ENABLE_ACTIONS,
-        payload: actions
+        payload: {
+            id, actions
+        }
     }
 }

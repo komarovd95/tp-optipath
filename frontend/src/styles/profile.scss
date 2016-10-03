@@ -90,22 +90,12 @@
   table {
     height: 100%;
 
-    //tr {
-    //  width: 100%;
-    //  display: table-row;
-    //  height: 31px;
-    //}
-
-    .td-component {
-      height: 31px;
-    }
-
     th:first-child, td:first-child {
       width: 10%;
     }
 
     tbody > td:nth-child(2) {
-      width: 30% !important;
+      width: 10% !important;
     }
 
     tbody > tr > td {
@@ -121,9 +111,9 @@
       margin: 5px 0;
       width: 100%;
     }
+  }
 
-    .standard-row {
-      display: block;
-    }
+  .table > tbody + tbody {
+    border-top: none;
   }
 }

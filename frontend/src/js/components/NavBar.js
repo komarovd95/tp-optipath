@@ -28,13 +28,13 @@ export default class NavBar extends React.Component {
                     <div className="collapse navbar-collapse" id="nav-collapsed">
                         <ul className="nav navbar-nav">
                             <NavLink to="/route" activeClassName="active">
-                                Новый маршрут
+                                <span className="glyphicon glyphicon-road"/> Новый маршрут
                             </NavLink>
                             <NavLink to="/about" activeClassName="active">
-                                О программе
+                                <span className="glyphicon glyphicon-info-sign"/> О программе
                             </NavLink>
                             <NavLink to="/faq" activeClassName="active">
-                                FAQ
+                                <span className="glyphicon glyphicon-question-sign"/> FAQ
                             </NavLink>
                         </ul>
 

@@ -8,6 +8,7 @@ import shortid from 'shortid';
 import GridList from './GridList';
 import ListPaginate from './ListPaginate';
 import TableFilter from '../containers/UsersActionContainer';
+import TableChecker from '../containers/TableCheckerContainer';
 
 class Loader extends React.Component {
     render() {
@@ -36,9 +37,7 @@ class TableLink extends React.Component {
         const link = '/users/id' + this.props.rowData.id;
 
         return (
-            <div className="td-component">
                 <Link to={link}>{this.props.data}</Link>
-            </div>
         )
     }
 }
@@ -57,9 +56,16 @@ class TableAction extends React.Component {
 }
 
 class TableComponent extends React.Component {
+    handleClick(event) {
+        console.log(jQuery(event.target))
+    }
+
     render() {
         return (
-            <div className="td-component">{this.props.data}</div>
+            <button id={'checker' + this.props.rowData.id}
+                    className="btn btn-default btn-xs" onClick={this.handleClick}>
+                Выбрать
+            </button>
         )
     }
 }
@@ -67,16 +73,20 @@ class TableComponent extends React.Component {
 export default class UserList extends React.Component {
     constructor() {
         super();
-        this.request = this.request.bind(this);
         this.requestData = this.requestData.bind(this);
     }
 
     static columns = [
         {
+            columnName: 'checker',
+            displayName: 'Выбрать',
+            sortable: false,
+            customComponent: TableChecker
+        },
+        {
             columnName: 'id',
             displayName: 'ID',
-            sortable: true,
-            customComponent: TableComponent
+            sortable: true
         },
         {
             columnName: 'username',
@@ -87,38 +97,17 @@ export default class UserList extends React.Component {
         {
             columnName: 'updatedAt',
             displayName: 'Последнее обновление',
-            sortable: true,
-            customComponent: TableComponent
+            sortable: true
         },
         {
             columnName: 'roles',
             displayName: 'Роль',
-            sortable: false,
-            customComponent: TableComponent
+            sortable: false
         }
     ];
 
     static rolesToString(roles) {
         return roles.includes('ROLE_ADMIN') ? 'Администратор' : 'Пользователь';
-    }
-
-    request({ selected: page, sort }) {
-        const { requestList, user: { pageable } } = this.props;
-
-        const height = jQuery('#user-panel').height();
-        const pageSize = Math.floor((height - 153) / 39);
-
-        const pageInfo = { size: 2 };
-
-        if (page) {
-            pageInfo.number = page;
-        }
-
-        if (sort) {
-            pageInfo.sort = sort;
-        }
-
-        requestList({ ...pageable, ...pageInfo });
     }
 
     requestData({ page, sort, username }) {
@@ -134,32 +123,14 @@ export default class UserList extends React.Component {
             newPageable.sort = sort;
         }
 
-        if (username || username === '') {
+        if (username) {
             newPageable.username = username;
         }
 
         this.props.requestList({ ...pageable, ...newPageable })
     }
 
-    handleClick(field) {
-        if (field === 'action' || field === 'roles') {
-            return;
-        }
-
-        let sort = this.props.user.pageable.sort;
-
-        const sortItems = sort.split(',');
-
-        if (sortItems[0] === field) {
-            sort = field + ',' + (sortItems[1] === 'asc' ? 'desc' : 'asc');
-        } else {
-            sort = field + ',asc';
-        }
-
-        this.request({ sort });
-    }
-
-    componentDidMount() {
+    componentWillMount() {
         this.requestData({});
     }
 
@@ -168,7 +139,6 @@ export default class UserList extends React.Component {
     }
 
     setPage(index) {
-        console.log('index:', index);
         this.requestData({ page: index })
     }
 
@@ -180,19 +150,6 @@ export default class UserList extends React.Component {
         this.requestData({ username: query });
     }
 
-    rowClick(constructor) {
-        const currentUser = this.props.auth.user;
-        const rowUser = constructor.props.data;
-
-        if (currentUser.username === rowUser.username) {
-            this.props.enableUserActions(['changePass']);
-        } else if (rowUser.roles !== 'Администратор') {
-            this.props.enableUserActions(['changePass', 'changeRole', 'delete']);
-        } else {
-            this.props.enableUserActions([]);
-        }
-    }
-
     render() {
         const { user: { users, isFetching, pageable } } = this.props;
 
@@ -202,9 +159,17 @@ export default class UserList extends React.Component {
             - userPanel.find('div.panel-heading').outerHeight()
             - userPanel.find('div.top-section').outerHeight();
 
-        userPanel.find('div.griddle-body').height(height);
-        userPanel.find('div.griddle-body > div').height(height);
+        //userPanel.find('div.griddle-body').height(height);
+        //userPanel.find('div.griddle-body > div').height(height);
         console.log('height:', height);
+
+        let paginationHeight = userPanel.find('ul.pagination').outerHeight();
+        let filterHeight = userPanel.find('div.filter-container').outerHeight();
+        let headerHeight = userPanel.find('thead').outerHeight();
+
+        //userPanel.find('div.griddle-footer').css('margin-top',
+        //    (height - paginationHeight - filterHeight - headerHeight
+        //        - 32 * users.length - 12) + 'px');
 
         const columns = UserList.columns.map(c => c.columnName);
         const metadata = UserList.columns.map(c => {
@@ -226,7 +191,8 @@ export default class UserList extends React.Component {
             return {
                 ...u,
                 updatedAt: new Date(u.updatedAt).toLocaleString('ru'),
-                roles: UserList.rolesToString(u.roles)
+                roles: UserList.rolesToString(u.roles),
+                checker: ''
             }
         });
 
@@ -240,7 +206,7 @@ export default class UserList extends React.Component {
                              externalSortColumn={pageable.sort.field}
                              externalSortAscending={pageable.sort.isAscending}
                              externalSetFilter={this.setFilter.bind(this)}
-                             externalSetPageSize={this.setPage}
+                             externalSetPageSize={() => {}}
                              externalMaxPage={pageable.totalPages}
                              externalCurrentPage={pageable.number}
                              externalLoadingComponent={Loader}
@@ -254,8 +220,7 @@ export default class UserList extends React.Component {
                              showFilter={true}
                              useCustomFilterComponent={true}
                              customFilterComponent={TableFilter}
-                             filterPlaceholderText="Имя..."
-                             onRowClick={this.rowClick.bind(this)} />
+                             filterPlaceholderText="Имя..." />
 
                     {/*<ReactPaginate previousLabel="назад"*/}
                                    {/*nextLabel="вперед"*/}

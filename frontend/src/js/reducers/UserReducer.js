@@ -13,6 +13,7 @@ const INITIAL_STATE = {
         totalPages: 0,
         username: ''
     },
+    currentId: null,
     actionsEnabled: []
 };
 
@@ -32,7 +33,9 @@ export default function userReducer(state = INITIAL_STATE, action) {
                 pageable: {
                     ...state.pageable,
                     ...action.payload.pageable
-                }
+                },
+                currentId: null,
+                actionsEnabled: []
             };
 
         case actionTypes.USER_LIST_FAILURE:
@@ -47,7 +50,8 @@ export default function userReducer(state = INITIAL_STATE, action) {
         case actionTypes.USER_ENABLE_ACTIONS:
             return {
                 ...state,
-                actionsEnabled: action.payload
+                currentId: action.payload.id,
+                actionsEnabled: action.payload.actions
             };
 
         default:
