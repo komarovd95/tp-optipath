@@ -23,7 +23,7 @@ public class PathUser extends DomainObject<Long> {
     private Long id;
 
     @Column(name = "user_name", unique = true, length = 20, nullable = false)
-    @NotNull @Size(min = 5, max = 20) @Pattern(regexp = "^[a-zA-Z0-9]+$")
+    @NotNull @Size(min = 4, max = 20) @Pattern(regexp = "^[a-zA-Z0-9]+$")
     private String username;
 
     @Column(name = "user_pass", nullable = false)

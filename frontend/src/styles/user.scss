@@ -4,6 +4,10 @@
   .panel {
     text-align: center;
     height: 100%;
+
+    th {
+      cursor: pointer;
+    }
   }
 
   .panel-heading {
@@ -12,11 +16,5 @@
 
   .table {
     text-align: left;
-  }
-
-  .pagination {
-    position: fixed;
-    left: 50%;
-    bottom: 60px;
   }
 }

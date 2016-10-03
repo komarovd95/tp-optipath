@@ -5,21 +5,9 @@ import { browserHistory } from 'react-router';
 import { CallApi } from '../util/APIUtil';
 import * as actionTypes from '../constants/AuthActionTypes';
 
-function signInRequest(credentials) {
-    const { username, password } = credentials;
-
-    const config = {
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
-    };
-
-    const request = CallApi.post('/signin',
-        querystring.stringify({ username, password }), config);
-
+function signInRequest() {
     return {
-        type: actionTypes.SIGNIN_REQUEST,
-        payload: request
+        type: actionTypes.SIGNIN_REQUEST
     }
 }
 
@@ -38,12 +26,68 @@ function signInFailure(error) {
 }
 
 function principalRequest() {
-    const request = CallApi.get('/user');
-
-    return {
-        type: actionTypes.PRINCIPAL_REQUEST,
-        payload: request
+    return () => {
+        return CallApi.get('/user');
     }
+}
+
+export function signInThunk(redirectUrl = '/', { username, password }) {
+    console.log('args:', arguments);
+
+    return (dispatch) => {
+        dispatch(signInRequest());
+
+        const config = {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        };
+
+        return CallApi.post('/signin',
+            querystring.stringify({ username, password }), config)
+            .then(response => {
+                const { status } = response;
+
+                if (status === 200) {
+                    return dispatch(principalRequest());
+                } else {
+                    return Promise.reject(response);
+                }
+            }, error => {
+                console.log('error:', error);
+                const { status, data: { message } } = error.response;
+
+                if (status === 401) {
+                    dispatch(signInFailure(message));
+                    throw new SubmissionError({
+                        _error: message
+                    })
+                } else {
+                    dispatch(signInFailure(status));
+                    alert('Не удалось войти в систему. Повторите запрос позже');
+                    return Promise.reject(status);
+                }
+            })
+            .then(response => {
+                const { status, data } = response;
+
+                if (status === 200) {
+                    dispatch(signInSuccess(data));
+
+                    if (window.sessionStorage) {
+                        window.sessionStorage.setItem('path-user',
+                            JSON.stringify(data));
+                    }
+
+                    browserHistory.replace(redirectUrl);
+
+                    return Promise.resolve(data);
+                } else {
+                    dispatch(signInFailure(data));
+                    return Promise.reject(data);
+                }
+            });
+    };
 }
 
 export function signIn(redirectUrl = '/', values, dispatch) {
@@ -87,21 +131,9 @@ export function signIn(redirectUrl = '/', values, dispatch) {
         });
 }
 
-function signUpRequest(credentials) {
-    const { username, password } = credentials;
-
-    const config = {
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    };
-
-    const request = CallApi.post('/api/pathUsers',
-        JSON.stringify({ username, password }), config);
-
+function signUpRequest() {
     return {
-        type: actionTypes.SIGNUP_REQUEST,
-        payload: request
+        type: actionTypes.SIGNUP_REQUEST
     }
 }
 
@@ -116,6 +148,73 @@ function signUpFailure(error) {
         type: actionTypes.SIGNUP_FAILURE,
         payload: error
     }
+}
+
+export function signUpThunk({ username, password }) {
+    return (dispatch) => {
+        dispatch(signUpRequest());
+
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+
+        return CallApi.post('/api/pathUsers',
+            JSON.stringify({ username, password }), config)
+            .then(response => {
+                const { status, data } = response;
+
+                if (status === 201) {
+                    dispatch(signUpSuccess());
+                    return dispatch(signInThunk('http://localhost:3000/me',
+                        { username, password }));
+                } else {
+                    dispatch(signUpFailure(status));
+                    return Promise.reject();
+                }
+            }, error => {
+                const { status, data } = error.response;
+
+                dispatch(signUpFailure(data));
+                if (status === 500) {
+                    throw new SubmissionError({
+                        _error : data.message
+                    });
+                } else {
+                    alert('Непредвиденная ошибка на сервере. Повторите запрос позже');
+                    return Promise.reject(data);
+                }
+            });
+    }
+}
+
+export function checkUsernameThunk(username) {
+    return (dispatch) => {
+        dispatch(checkUsernameRequest());
+
+        return CallApi.get(`/api/pathUsers/search/existsUsername?username=${username}`)
+            .then(response => {
+                const status = response.status;
+
+                dispatch(checkUsernameAccept());
+
+                if (status === 200) {
+                    if (response.data) {
+                        return Promise.reject({ username: [`Имя ${username} уже занято`] })
+                    } else {
+                        return Promise.resolve();
+                    }
+                } else {
+                    return Promise.reject();
+                }
+            }, error => {
+                const status = error.response.status;
+                console.log(status);
+                dispatch(checkUsernameAccept());
+                return Promise.reject(status);
+            });
+    };
 }
 
 export function signUp(values, dispatch) {
@@ -142,19 +241,35 @@ export function signUp(values, dispatch) {
 }
 
 function signOutRequest() {
-    const request = CallApi.get('/signout');
+    // const request = CallApi.get('/signout');
 
     return {
-        type: actionTypes.SIGNOUT_REQUEST,
-        payload: request
+        type: actionTypes.SIGNOUT_REQUEST
+        // payload: request
     }
 }
 
 function signOutSuccess() {
     browserHistory.replace('/');
+    window.sessionStorage.removeItem('path-user');
 
     return {
         type: actionTypes.SIGNOUT_SUCCESS
+    }
+}
+
+export function signOutThunk() {
+    return (dispatch) => {
+        return CallApi.get('/signout')
+            .then(response => {
+                const status = response.status;
+
+                dispatch(signOutSuccess());
+
+                if (status !== 200) {
+                    return Promise.reject(status);
+                }
+            });
     }
 }
 
@@ -167,19 +282,21 @@ export function signOut(dispatch) {
 
             dispatch(signOutSuccess());
             if (status === 200) {
-                window.sessionStorage.removeItem('path-user');
             } else {
                 console.log(response.payload.response.data.message);
             }
         });
 }
 
-function checkUsernameRequest(username) {
-    const request = CallApi.get(`/api/pathUsers/search/findByUsername?username=${username}`);
-
+function checkUsernameRequest() {
     return {
-        type: actionTypes.CHECK_USERNAME_REQUEST,
-        payload: request
+        type: actionTypes.CHECK_USERNAME_REQUEST
+    }
+}
+
+function checkUsernameAccept() {
+    return {
+        type: actionTypes.CHECK_USERNAME_ACCEPT
     }
 }
 

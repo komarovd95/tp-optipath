@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 
-import { signOut } from '../actions/AuthActions';
+import { signOut, signOutThunk } from '../actions/AuthActions';
 import { changeTab } from '../actions/ProfileActions';
 
 import ProfileSidebar from '../components/ProfileSidebar';
@@ -16,7 +16,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         tabChangeClick: tabName => dispatch(changeTab(tabName)),
-        signOutUser: () => signOut(dispatch)
+        signOutUser: () => dispatch(signOutThunk())
     }
 }
 

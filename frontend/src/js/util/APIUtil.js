@@ -3,11 +3,21 @@ import url from 'url';
 
 export class CallApi {
     static get(urlString, data, config) {
-        return axios.get(transformUrl(urlString), data, config);
+        return axios.get(transformUrl(urlString), data, createConfig(config));
     }
 
     static post(urlString, data, config) {
-        return axios.post(transformUrl(urlString), data, config);
+        return axios.post(transformUrl(urlString), data, createConfig(config));
+    }
+
+    static signIn(token) {
+        const config = {
+            headers: {
+                'Authentication' : `Basic ${token}`
+            }
+        };
+
+        return CallApi.get('/user', {}, config);
     }
 }
 
@@ -28,4 +38,22 @@ export function transformUrl(urlString) {
     }
 
     return urlString;
+}
+
+export function toRepresentativeError(error, context) {
+
+}
+
+function createConfig(config = {}) {
+    if (config) {
+        if (config.headers) {
+            config.headers['Authentication'] = `Basic`
+        } else {
+            config.headers = {
+                'Authentication': `Basic`
+            }
+        }
+    }
+
+    return config;
 }

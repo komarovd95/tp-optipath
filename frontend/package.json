@@ -25,6 +25,8 @@
     "react-addons-create-fragment": "^15.3.2",
     "react-router": "^2.7.0",
     "react-paginate": "^2.2.3",
+    "react-data-grid": "^1.0.48",
+    "griddle-react": "^0.6.1",
     "redux": "^3.6.0",
     "redux-form": "^6.0.5",
     "redux-promise": "^0.5.3",

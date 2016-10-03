@@ -4,17 +4,17 @@ import * as userActions from '../constants/UserActionTypes';
 
 import { CallApi } from '../util/APIUtil';
 
-function userListRequest(pageable) {
-    console.log('pageable:', pageable);
-
-    const { number: page, size } = pageable;
-
-    const request = CallApi.get('/api/pathUsers?'
-        + querystring.stringify({ page, size }));
+function userListRequest() {
+    // console.log('pageable:', pageable);
+    //
+    // const { number: page, size } = pageable;
+    //
+    // const request = CallApi.get('/api/pathUsers?'
+    //     + querystring.stringify({ page, size }));
 
     return {
-        type: userActions.USER_LIST_REQUEST,
-        payload: request
+        type: userActions.USER_LIST_REQUEST
+        // payload: request
     }
 }
 
@@ -29,6 +29,42 @@ function userListFailure(error) {
     return {
         type: userActions.USER_LIST_FAILURE,
         payload: error
+    }
+}
+
+export function userListThunk({ number: page, size, sort, username }) {
+    return (dispatch) => {
+        dispatch(userListRequest());
+
+        const requestData = { page, size, username };
+
+        if (sort) {
+            requestData.sort = sort.field + ','
+                + (sort.isAscending ? 'asc' : 'desc');
+        }
+
+        return CallApi.get('/api/pathUsers/search/findAllByUsernameContaining?'
+            + window.decodeURIComponent(querystring.stringify(requestData)))
+            .then(response => {
+                const status = response.status;
+
+                if (status === 200) {
+                    dispatch(userListSuccess({
+                        data: response.data._embedded.pathUsers,
+                        pageable: {
+                            ...response.data.page,
+                            sort
+                        }
+                    }));
+                } else {
+                    console.log(status);
+                    return Promise.reject();
+                }
+            }, error => {
+                dispatch(userListFailure(error));
+                alert('Ошибка на сервере. Повторите запрос позже');
+                return Promise.reject(error);
+            });
     }
 }
 
@@ -55,5 +91,12 @@ export function userList(dispatch, pageable) {
 export function userListReset() {
     return {
         type: userActions.USER_LIST_RESET
+    }
+}
+
+export function userEnableActions(actions) {
+    return {
+        type: userActions.USER_ENABLE_ACTIONS,
+        payload: actions
     }
 }

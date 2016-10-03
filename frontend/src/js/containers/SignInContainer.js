@@ -5,7 +5,7 @@ import { reduxForm } from 'redux-form';
 import { validateField } from '../util/FormUtil';
 import SignInForm from '../components/SignInForm';
 
-import { signIn } from '../actions/AuthActions';
+import { signIn, signInThunk } from '../actions/AuthActions';
 
 function validate(values) {
     const errors = {};
@@ -51,9 +51,9 @@ function validate(values) {
     return errors;
 }
 
-function mapDispatchToProps() {
+function mapDispatchToProps(dispatch) {
     return {
-        signInUser: signIn
+        signInUser: (next, values) => dispatch(signInThunk(next, values))
     }
 }
 

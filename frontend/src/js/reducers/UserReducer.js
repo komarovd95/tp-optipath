@@ -2,12 +2,18 @@ import * as actionTypes from '../constants/UserActionTypes';
 
 const INITIAL_STATE = {
     isFetching: false,
-    users: null,
+    users: [],
     pageable: {
         number: 0,
-        size: 50,
-        totalPages: undefined
-    }
+        size: 2,
+        sort: {
+            field: 'id',
+            isAscending: true
+        },
+        totalPages: 0,
+        username: ''
+    },
+    actionsEnabled: []
 };
 
 export default function userReducer(state = INITIAL_STATE, action) {
@@ -37,6 +43,12 @@ export default function userReducer(state = INITIAL_STATE, action) {
 
         case actionTypes.USER_LIST_RESET:
             return INITIAL_STATE;
+
+        case actionTypes.USER_ENABLE_ACTIONS:
+            return {
+                ...state,
+                actionsEnabled: action.payload
+            };
 
         default:
             return state;

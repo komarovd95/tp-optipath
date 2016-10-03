@@ -1,20 +1,22 @@
 import { connect } from 'react-redux';
 
 import UserList from '../components/UserList';
-import { userList, userListReset } from '../actions/UserActions';
+import { userList, userListThunk, userListReset, userEnableActions } from '../actions/UserActions';
 
 function mapStateToProps(state) {
-    const { user } = state;
+    const { auth, user } = state;
 
     return {
+        auth,
         user
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        requestList: (pageable) => userList(dispatch, pageable),
-        reset: () => dispatch(userListReset())
+        requestList: (pageable) => dispatch(userListThunk(pageable)),
+        reset: () => dispatch(userListReset()),
+        enableUserActions: (actions) => dispatch(userEnableActions(actions))
     }
 }
 

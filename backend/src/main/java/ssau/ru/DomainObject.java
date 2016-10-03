@@ -1,6 +1,8 @@
 package ssau.ru;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -8,13 +10,15 @@ import java.util.Date;
 
 @MappedSuperclass
 public abstract class DomainObject<ID extends Serializable> {
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     @JsonIgnore
+    @CreatedDate
     private Date createdAt;
 
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
+    @LastModifiedDate
     private Date updatedAt;
 
     public abstract ID getId();

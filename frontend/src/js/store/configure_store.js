@@ -1,6 +1,7 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 
 import promiseMiddleware from 'redux-promise';
+import thunkMiddleware from 'redux-thunk';
 
 import appReducer from '../reducers/AppReducer';
 
@@ -9,7 +10,7 @@ export default function configureStore(initialState) {
 }
 
 function getMiddleware() {
-    const middlewares = applyMiddleware(promiseMiddleware);
+    const middlewares = applyMiddleware(thunkMiddleware);
 
     return (process.env.NODE_ENV === 'production')
         ? middlewares
