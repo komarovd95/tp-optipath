@@ -19,6 +19,9 @@ module.exports = {
                 {
                     src: './node_modules/vis/dist/vis.css',
                     minSrc: './node_modules/vis/dist/vis.min.css'
+                },
+                {
+                    src: './node_modules/react-data-grid/dist/react-data-grid.css'
                 }
             ],
             options: {

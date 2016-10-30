@@ -1,9 +1,13 @@
-html, body {
+html, body, .container-fluid {
   height: 100%;
 }
 
 body {
-  padding-top: 50px;
+  padding: 50px 0;
+}
+
+#root {
+  height: 100%;
 }
 
 .authenticated-component {
@@ -44,5 +48,40 @@ body {
 
   .sidebar {
     bottom: 0;
+  }
+}
+
+.btn-success {
+  background-color: #43cda1;
+  border-color: #43cda1;
+}
+
+.btn-success:hover,
+.btn-success:focus, .btn-success.focus,
+.btn-success:active, .btn-success.active,
+.btn-success:active:hover, .btn-success.active:hover,
+.btn-success:active:focus, .btn-success.active:focus,
+.btn-success:active.focus, .btn-success.active.focus
+{
+  background-color: #3D997C;
+  border-color: #3D997C;
+}
+
+.shim {
+  background: rgba(255, 255, 255, 0.75);
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  text-align: center;
+  border-radius: 4px;
+
+  .glyphicon {
+    position: absolute;
+    top: 50%;
+    font-size: 48px;
+    color: rgba(255, 255, 255, 0.4);
+    margin-top: -24px;
   }
 }

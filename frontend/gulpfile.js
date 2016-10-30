@@ -56,6 +56,11 @@ gulp.task("assets:fonts", function() {
         .pipe(gulp.dest(paths.build + "fonts/"));
 });
 
+gulp.task("assets:images", function () {
+    return gulp.src(paths.src.img)
+        .pipe(gulp.dest(paths.build));
+});
+
 gulp.task("assets:vendor", function() {
     return gulp.src("./bundle.config.js")
         .pipe(bundle())
@@ -136,7 +141,13 @@ gulp.task("serve", function() {
     browserSync.watch(paths.build + "**/*.*").on('change', browserSync.reload);
 });
 
-gulp.task("build", ["assets", "assets:vendor", "assets:fonts", "webpack", "styles"]);
+gulp.task("build", [
+    "assets",
+    "assets:vendor",
+    "assets:fonts",
+    "assets:images",
+    "webpack",
+    "styles"]);
 
 gulp.task("dev", ["build", "serve", "watch"]);
 

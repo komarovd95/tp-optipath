@@ -1,0 +1,8 @@
+package ssau.ru.cars;
+
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+
+@RepositoryRestResource
+public interface FuelTypeRepository extends CrudRepository<FuelType, Long> {
+}

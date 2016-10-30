@@ -1,7 +1,7 @@
 import React from 'react';
 
 import Navigation from '../containers/NavContainer';
-import Animation from '../components/Animation';
+import Animation from '../components/common/Animation';
 
 export default class AppPage extends React.Component {
     render() {

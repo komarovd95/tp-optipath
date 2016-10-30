@@ -27,13 +27,11 @@ function signInFailure(error) {
 
 function principalRequest() {
     return () => {
-        return CallApi.get('/user');
+        return CallApi.get('api/pathUsers/user');
     }
 }
 
-export function signInThunk(redirectUrl = '/', { username, password }) {
-    console.log('args:', arguments);
-
+export function signIn(redirectUrl = '/', { username, password }) {
     return (dispatch) => {
         dispatch(signInRequest());
 
@@ -90,47 +88,6 @@ export function signInThunk(redirectUrl = '/', { username, password }) {
     };
 }
 
-export function signIn(redirectUrl = '/', values, dispatch) {
-    console.log(arguments);
-
-    return dispatch(signInRequest(values))
-        .then(response => {
-            const status = response.error
-                ? response.payload.response.status
-                : response.payload.status;
-
-            if (status === 200) {
-                dispatch(principalRequest())
-                    .then(principalResponse => {
-                        const payload = principalResponse.payload;
-                            console.log(payload);
-
-                        if (payload.status === 200) {
-                            dispatch(signInSuccess(payload.data));
-                            if (window.sessionStorage) {
-                                window.sessionStorage.setItem('path-user',
-                                    JSON.stringify(payload.data));
-                            }
-
-                            browserHistory.replace(redirectUrl);
-                        } else {
-                            dispatch(signInFailure(payload));
-                            alert('Не удалось войти в систему. Повторите запрос позже');
-                        }
-                    });
-            } else {
-                dispatch(signInFailure(response.payload.response.data));
-                if (status === 401) {
-                    throw new SubmissionError({
-                        _error : response.payload.response.data.message
-                    });
-                } else {
-                    alert('Непредвиденная ошибка на сервере. Повторите запрос позже');
-                }
-            }
-        });
-}
-
 function signUpRequest() {
     return {
         type: actionTypes.SIGNUP_REQUEST
@@ -150,7 +107,7 @@ function signUpFailure(error) {
     }
 }
 
-export function signUpThunk({ username, password }) {
+export function signUp({ username, password }) {
     return (dispatch) => {
         dispatch(signUpRequest());
 
@@ -167,7 +124,7 @@ export function signUpThunk({ username, password }) {
 
                 if (status === 201) {
                     dispatch(signUpSuccess());
-                    return dispatch(signInThunk('http://localhost:3000/me',
+                    return dispatch(signIn('http://localhost:3000/me',
                         { username, password }));
                 } else {
                     dispatch(signUpFailure(status));
@@ -189,7 +146,7 @@ export function signUpThunk({ username, password }) {
     }
 }
 
-export function checkUsernameThunk(username) {
+export function checkUsername(username) {
     return (dispatch) => {
         dispatch(checkUsernameRequest());
 
@@ -217,38 +174,6 @@ export function checkUsernameThunk(username) {
     };
 }
 
-export function signUp(values, dispatch) {
-    return dispatch(signUpRequest(values))
-        .then(response => {
-            const status = response.payload.error
-                ? response.payload.response.status
-                : response.payload.status;
-
-            if (status === 201) {
-                dispatch(signUpSuccess());
-                signIn('http://localhost:3000/me', values, dispatch); // todo
-            } else {
-                dispatch(signUpFailure(response.payload));
-                if (status === 500) {
-                    throw new SubmissionError({
-                        _error : response.payload.response.data.message
-                    });
-                } else {
-                    alert('Непредвиденная ошибка на сервере. Повторите запрос позже');
-                }
-            }
-        });
-}
-
-function signOutRequest() {
-    // const request = CallApi.get('/signout');
-
-    return {
-        type: actionTypes.SIGNOUT_REQUEST
-        // payload: request
-    }
-}
-
 function signOutSuccess() {
     browserHistory.replace('/');
     window.sessionStorage.removeItem('path-user');
@@ -258,7 +183,7 @@ function signOutSuccess() {
     }
 }
 
-export function signOutThunk() {
+export function signOut() {
     return (dispatch) => {
         return CallApi.get('/signout')
             .then(response => {
@@ -273,21 +198,6 @@ export function signOutThunk() {
     }
 }
 
-export function signOut(dispatch) {
-    return dispatch(signOutRequest())
-        .then(response => {
-            const status = response.payload.error
-                ? response.payload.response.status
-                : response.payload.status;
-
-            dispatch(signOutSuccess());
-            if (status === 200) {
-            } else {
-                console.log(response.payload.response.data.message);
-            }
-        });
-}
-
 function checkUsernameRequest() {
     return {
         type: actionTypes.CHECK_USERNAME_REQUEST
@@ -298,21 +208,4 @@ function checkUsernameAccept() {
     return {
         type: actionTypes.CHECK_USERNAME_ACCEPT
     }
-}
-
-export function checkUsername(username, dispatch) {
-    return dispatch(checkUsernameRequest(username))
-        .then(response => {
-            const status = response.payload.error
-                ? response.payload.response.status
-                : response.payload.status;
-
-            dispatch({
-                type: actionTypes.CHECK_USERNAME_ACCEPT
-            });
-
-            if (status === 200) {
-                throw { username: [`Имя ${username} уже занято`] };
-            }
-        });
 }

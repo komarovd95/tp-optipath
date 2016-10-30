@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 
-import UserList from '../components/UserList';
-import { userList, userListThunk, userListReset, userEnableActions } from '../actions/UserActions';
+import UserList from '../components/user-list/UserList';
+import { userList, userListReset, userEnableActions, userDeleteModalClose, userDelete } from '../actions/UserActions';
 
 function mapStateToProps(state) {
     const { auth, user } = state;
@@ -14,9 +14,11 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        requestList: (pageable) => dispatch(userListThunk(pageable)),
+        requestList: (pageable) => dispatch(userList(pageable)),
         reset: () => dispatch(userListReset()),
-        enableUserActions: (actions) => dispatch(userEnableActions(actions))
+        enableUserActions: (id, actions) => dispatch(userEnableActions(id, actions)),
+        modalClose: () => dispatch(userDeleteModalClose()),
+        modalAccept: (pageable, userId) => dispatch(userDelete(pageable, userId))
     }
 }
 

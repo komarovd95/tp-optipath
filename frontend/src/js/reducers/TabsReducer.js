@@ -1,7 +1,7 @@
 import {CHANGE_TAB, NAVIGATE_TAB} from '../constants/ProfileActionTypes';
 
 const INITIAL_STATE = {
-    profileTab: 'routes'
+    profileTab: 'profile'
 };
 
 export default function tabsReducer(state = INITIAL_STATE, action) {

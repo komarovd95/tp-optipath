@@ -5,15 +5,17 @@ const INITIAL_STATE = {
     users: [],
     pageable: {
         number: 0,
-        size: 2,
+        size: 20,
         sort: {
             field: 'id',
-            isAscending: true
+            isAscending: false
         },
         totalPages: 0,
         username: ''
     },
-    actionsEnabled: []
+    selectedUser: null,
+    actionsEnabled: [],
+    deleteUserIsShown: false
 };
 
 export default function userReducer(state = INITIAL_STATE, action) {
@@ -21,7 +23,9 @@ export default function userReducer(state = INITIAL_STATE, action) {
         case actionTypes.USER_LIST_REQUEST:
             return {
                 ...state,
-                isFetching: true
+                isFetching: true,
+                selectedUser: null,
+                actionsEnabled: []
             };
 
         case actionTypes.USER_LIST_SUCCESS:
@@ -47,7 +51,41 @@ export default function userReducer(state = INITIAL_STATE, action) {
         case actionTypes.USER_ENABLE_ACTIONS:
             return {
                 ...state,
-                actionsEnabled: action.payload
+                selectedUser: action.payload.selectedUser,
+                actionsEnabled: action.payload.actions
+            };
+
+        case actionTypes.USER_DELETE_SHOW:
+            return {
+                ...state,
+                deleteUserIsShown: true
+            };
+
+        case actionTypes.USER_DELETE_CLOSE:
+            return {
+                ...state,
+                deleteUserIsShown: false,
+                isFetching: false
+            };
+
+        case actionTypes.USER_DELETE_REQUEST:
+            return {
+                ...state,
+                isFetching: true,
+            };
+
+        case actionTypes.USER_DELETE_SUCCESS:
+            return {
+                ...state,
+                deleteUserIsShown: false,
+                isFetching: false
+            };
+
+        case actionTypes.USER_DELETE_FAILURE:
+            return {
+                ...state,
+                deleteUserIsShown: false,
+                isFetching: false
             };
 
         default:

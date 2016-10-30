@@ -5,16 +5,8 @@ import * as userActions from '../constants/UserActionTypes';
 import { CallApi } from '../util/APIUtil';
 
 function userListRequest() {
-    // console.log('pageable:', pageable);
-    //
-    // const { number: page, size } = pageable;
-    //
-    // const request = CallApi.get('/api/pathUsers?'
-    //     + querystring.stringify({ page, size }));
-
     return {
         type: userActions.USER_LIST_REQUEST
-        // payload: request
     }
 }
 
@@ -32,7 +24,7 @@ function userListFailure(error) {
     }
 }
 
-export function userListThunk({ number: page, size, sort, username }) {
+export function userList({ number: page, size, sort, username }) {
     return (dispatch) => {
         dispatch(userListRequest());
 
@@ -43,17 +35,21 @@ export function userListThunk({ number: page, size, sort, username }) {
                 + (sort.isAscending ? 'asc' : 'desc');
         }
 
-        return CallApi.get('/api/pathUsers/search/findAllByUsernameContaining?'
+        return CallApi.get('/api/pathUsers/search/filter?'
             + window.decodeURIComponent(querystring.stringify(requestData)))
             .then(response => {
                 const status = response.status;
 
                 if (status === 200) {
+                    const data = response.data._embedded ?
+                        response.data._embedded.pathUsers : [];
+
                     dispatch(userListSuccess({
-                        data: response.data._embedded.pathUsers,
+                        data,
                         pageable: {
                             ...response.data.page,
-                            sort
+                            sort,
+                            username
                         }
                     }));
                 } else {
@@ -68,35 +64,78 @@ export function userListThunk({ number: page, size, sort, username }) {
     }
 }
 
-export function userList(dispatch, pageable) {
-    dispatch(userListRequest(pageable))
-        .then(response => {
-            const status = response.error
-                ? response.payload.response.status
-                : response.payload.status;
-
-            if (status === 200) {
-                console.log('success:', response);
-                dispatch(userListSuccess({
-                    data: response.payload.data._embedded.pathUsers,
-                    pageable: response.payload.data.page
-                }));
-            } else {
-                dispatch(userListFailure(response.payload));
-                alert('Ошибка на сервере. Повторите запрос позже');
-            }
-        });
-}
-
 export function userListReset() {
     return {
         type: userActions.USER_LIST_RESET
     }
 }
 
-export function userEnableActions(actions) {
+export function userEnableActions(selectedUser = null, actions = []) {
     return {
         type: userActions.USER_ENABLE_ACTIONS,
-        payload: actions
+        payload: {
+            actions,
+            selectedUser
+        }
+    }
+}
+
+export function userDeleteModalShow() {
+    return {
+        type: userActions.USER_DELETE_SHOW
+    }
+}
+
+export function userDeleteModalClose() {
+    return {
+        type: userActions.USER_DELETE_CLOSE
+    }
+}
+
+function userDeleteRequest() {
+    return {
+        type: userActions.USER_DELETE_REQUEST
+    }
+}
+
+function userDeleteSuccess() {
+    return {
+        type: userActions.USER_DELETE_SUCCESS
+    }
+}
+
+function userDeleteFailure(error) {
+    return {
+        type: userActions.USER_DELETE_FAILURE,
+        payload: error
+    }
+}
+
+export function userDelete(pageable = {}, userId) {
+    return (dispatch) => {
+        dispatch(userDeleteRequest());
+
+        return CallApi.remove(`/api/pathUsers/${userId}`)
+            .then(response => {
+                const status = response.status;
+
+                if (status === 204) {
+                    dispatch(userDeleteSuccess());
+
+                    if (pageable.totalElements % pageable.size === 1) {
+                        pageable.number -= 1;
+                    }
+
+                    return dispatch(userList(pageable))
+                } else {
+                    console.log(response);
+                    return Promise.reject(status);
+                }
+            }, error => {
+                alert('Непредвиденная ошибка. Повторите запрос позже');
+                dispatch(userDeleteFailure(error.response.data.message));
+                return Promise.reject(error);
+            })
+
     }
 }

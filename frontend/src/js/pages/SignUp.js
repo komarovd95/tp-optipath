@@ -9,12 +9,13 @@ export default class SignUp extends React.Component {
 
     render() {
         return (
-            <div id="signup-form" className="overlay">
+            <div id="signup-form" className="react-animation__page overlay">
                 <button type="button" className="close"
                         onClick={this.goBack.bind(this)}>
                     <span>&times;</span>
                 </button>
                 <div className="content">
+                    <img src="./logo.png" className="hidden-xs hidden-sm"/>
                     <SignUpContainer />
                 </div>
             </div>

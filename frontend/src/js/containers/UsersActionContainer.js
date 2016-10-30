@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 
-import TableFilter from '../components/TableFilter';
+import UserListFilter from '../components/user-list/UserListFilter';
+import { userDeleteModalShow } from '../actions/UserActions';
 
 function mapStateToProps(state) {
     const { user: { actionsEnabled } } = state;
@@ -10,4 +11,10 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps)(TableFilter)
+function mapDispatchToProps(dispatch) {
+    return {
+        deleteUserShow: () => dispatch(userDeleteModalShow())
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserListFilter)

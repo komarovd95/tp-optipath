@@ -2,9 +2,9 @@ import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';
 
 import { validateField } from '../util/FormUtil';
-import SignUpForm from '../components/SignUpForm';
+import SignUpForm from '../components/auth/SignUpForm';
 
-import { signUp, signUpThunk, checkUsername, checkUsernameThunk } from '../actions/AuthActions';
+import { signUp, checkUsername } from '../actions/AuthActions';
 
 function validate(values) {
     const errors = {};
@@ -61,12 +61,12 @@ function validate(values) {
 }
 
 function asyncValidate(values, dispatch) {
-    return dispatch(checkUsernameThunk(values.username))
+    return dispatch(checkUsername(values.username))
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        signUpUser: (values) => dispatch(signUpThunk(values))
+        signUpUser: (values) => dispatch(signUp(values))
     }
 }
 

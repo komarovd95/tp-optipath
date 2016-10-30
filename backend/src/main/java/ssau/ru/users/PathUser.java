@@ -6,7 +6,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ssau.ru.DomainObject;
+import ssau.ru.graph.Car;
 import ssau.ru.graph.PathGraph;
+import ssau.ru.graph.Route;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -37,6 +39,10 @@ public class PathUser extends DomainObject<Long> {
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<PathGraph> pathGraphs;
+
+    //private List<Route> routes;
+
+    //private List<Car> cars;
 
     private PathUser() {
         pathGraphs = new ArrayList<>();

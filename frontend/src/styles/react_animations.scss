@@ -21,19 +21,34 @@
 }
 
 .fade-out-enter.fade-out-enter-active {
-  transition: opacity .3s ease-in;
   opacity: 1;
+  transition: opacity .3s ease-in;
 }
 
 .fade-out-leave {
   opacity: 1;
+  transition: opacity .3s ease-in;
 }
 
 .fade-out-leave.fade-out-leave-active {
+  opacity: 0.01;
   transition: opacity .3s ease-in;
-  opacity: 0;
 }
 
 .react-animation {
+  margin: 0;
+  padding: 0;
   height: 100%;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.react-animation__page {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: auto;
 }

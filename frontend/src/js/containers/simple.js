@@ -3,7 +3,7 @@ import React from 'react';
 export default class Simple extends React.Component {
     render() {
         return (
-            <div className="container-fluid react-animation">
+            <div className="react-animation__page container-fluid">
                 <p>Simple sdjgd</p>
             </div>
         )

@@ -22,7 +22,8 @@ public class PathUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username)
+            throws UsernameNotFoundException {
         PathUser user = userRepository.findByUsername(username);
         if (user == null) {
             throw new UsernameNotFoundException(username);
@@ -30,7 +31,8 @@ public class PathUserDetailsService implements UserDetailsService {
 
         System.out.println(getAuthorities(user.getRoles()));
 
-        return new User(user.getUsername(), user.getPassword(), getAuthorities(user.getRoles()));
+        return new User(user.getUsername(), user.getPassword(),
+                getAuthorities(user.getRoles()));
     }
 
     private List<GrantedAuthority> getAuthorities(Collection<String> roles) {

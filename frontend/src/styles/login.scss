@@ -9,7 +9,7 @@
 
   .content {
     position: relative;
-    top: 25%;
+    top: 10%;
     width: 100%;
     text-align: center;
 
@@ -23,6 +23,10 @@
       max-width: 320px;
       padding: 10px;
       margin: auto;
+
+      img {
+        width: 100%;
+      }
 
       div.alert {
         padding: 10px;
@@ -63,11 +67,5 @@
 
   .close:hover {
     opacity: .7;
-  }
-}
-
-@media(max-width: 767px) {
-  .overlay > .content {
-    top: 15%;
   }
 }

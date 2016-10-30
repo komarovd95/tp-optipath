@@ -5,19 +5,29 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.transaction.annotation.Transactional;
+import ssau.ru.cars.*;
+import ssau.ru.cars.Car;
+import ssau.ru.cars.FuelType;
 import ssau.ru.graph.*;
 import ssau.ru.users.PathUser;
 import ssau.ru.users.PathUserRepository;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 @SpringBootApplication
 public class BackendApplication implements CommandLineRunner {
     @Autowired
     public BackendApplication(PathUserRepository userRepository, PathGraphRepository graphRepository,
-                              PathNodeRepository nodeRepository, PathEdgeRepository edgeRepository) {
+                              PathNodeRepository nodeRepository, PathEdgeRepository edgeRepository, CarRepository carRepository, CarBrandRepository carBrandRepository, FuelTypeRepository fuelTypeRepository) {
         this.userRepository = userRepository;
         this.graphRepository = graphRepository;
         this.nodeRepository = nodeRepository;
         this.edgeRepository = edgeRepository;
+        this.carRepository = carRepository;
+        this.carBrandRepository = carBrandRepository;
+        this.fuelTypeRepository = fuelTypeRepository;
     }
 
     public static void main(String[] args) {
@@ -31,6 +41,12 @@ public class BackendApplication implements CommandLineRunner {
     private final PathNodeRepository nodeRepository;
 
     private final PathEdgeRepository edgeRepository;
+
+    private final CarBrandRepository carBrandRepository;
+
+    private final FuelTypeRepository fuelTypeRepository;
+
+    private final CarRepository carRepository;
 
 	@Override
     @Transactional
@@ -62,8 +78,24 @@ public class BackendApplication implements CommandLineRunner {
         nodeRepository.save(node1);
         edgeRepository.save(edge);
 
+        List<PathUser> users = new ArrayList<>();
+
+        for (int i = 0; i < 50; i++) {
+            users.add(new PathUser("dima" + i, "dima"));
+        }
+
+        userRepository.save(users);
+
         for (PathUser u : userRepository.findAll()) {
             System.out.println(u.getUsername() + " : " + u.getPathGraphs());
         }
+
+        CarBrand brand = new CarBrand("BMW");
+        ssau.ru.cars.FuelType fuelType = new FuelType("GAS", 10.0);
+        Car car = new Car(brand, "X56", 180, fuelType, 10.0);
+
+        carBrandRepository.save(brand);
+        fuelTypeRepository.save(fuelType);
+        carRepository.save(car);
     }
 }

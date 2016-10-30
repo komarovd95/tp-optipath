@@ -42,6 +42,10 @@ public class PathEdge {
     @Column(name = "edge_directed")
     private boolean directed;
 
+    //private RoadSign sign;
+
+    //private String streetName;
+
     public PathEdge() {}
 
     public PathEdge(PathGraph graph, PathNode from, PathNode to) {

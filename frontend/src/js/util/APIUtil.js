@@ -10,6 +10,10 @@ export class CallApi {
         return axios.post(transformUrl(urlString), data, createConfig(config));
     }
 
+    static remove(urlString, data, config) {
+        return axios.delete(transformUrl(urlString), data, createConfig(config));
+    }
+
     static signIn(token) {
         const config = {
             headers: {

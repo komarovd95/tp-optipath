@@ -3,9 +3,9 @@ import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';
 
 import { validateField } from '../util/FormUtil';
-import SignInForm from '../components/SignInForm';
+import SignInForm from '../components/auth/SignInForm';
 
-import { signIn, signInThunk } from '../actions/AuthActions';
+import { signIn } from '../actions/AuthActions';
 
 function validate(values) {
     const errors = {};
@@ -53,7 +53,7 @@ function validate(values) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        signInUser: (next, values) => dispatch(signInThunk(next, values))
+        signInUser: (next, values) => dispatch(signIn(next, values))
     }
 }
 

@@ -9,7 +9,7 @@ export default class SignIn extends React.Component {
 
     render() {
         return (
-            <div id="login-form" className="overlay">
+            <div id="login-form" className="react-animation__page overlay">
                 <button type="button" className="close" onClick={this.goBack.bind(this)}>
                     <span>&times;</span>
                 </button>

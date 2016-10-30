@@ -1,6 +1,5 @@
 package ssau.ru;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -12,7 +11,6 @@ import java.util.Date;
 public abstract class DomainObject<ID extends Serializable> {
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
-    @JsonIgnore
     @CreatedDate
     private Date createdAt;
 

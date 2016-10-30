@@ -8,7 +8,7 @@ import AppPage from './pages/App';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import RouteHolder from './pages/route';
-import Profile from './pages/profile';
+import Profile from './pages/Profile';
 import Simple from './containers/simple';
 
 const routes = (
@@ -19,6 +19,7 @@ const routes = (
         <Route path="/signup" component={SignUp} />
         <Route path="/route" component={RouteHolder} />
         <Route path="/me" component={requireAuthentication(Profile)}/>
+        <Route path="/faq" component={Simple} />
     </Route>
 );
 
