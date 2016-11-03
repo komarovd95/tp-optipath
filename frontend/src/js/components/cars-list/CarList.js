@@ -9,7 +9,8 @@ import ListLoader from '../list/EmptyList';
 import ListPaginate from '../list/ListPaginate';
 import ListSpinner from '../list/ListSpinner';
 
-import CarListFilter from './CarListFilter';
+import CarListFilter from '../../containers/CarFilterContainer';
+import CarDeleteModal from './CarDeleteModal';
 
 export default class CarList extends React.Component {
     static columns = [
@@ -57,6 +58,11 @@ export default class CarList extends React.Component {
         }
     };
 
+    static carEquality(c1, c2) {
+        return (c1.brand === c2.brand && c1.name === c2.name
+            && c1.fuelType === c2.fuelType)
+    }
+
     constructor() {
         super();
         this.requestData = this.requestData.bind(this);
@@ -64,6 +70,10 @@ export default class CarList extends React.Component {
 
     componentDidMount() {
         this.props.requestData({});
+    }
+
+    componentWillUnmount() {
+        this.props.resetList();
     }
 
     requestData({ page, sort, filter }) {
@@ -88,8 +98,12 @@ export default class CarList extends React.Component {
     }
 
     rowGetter(index) {
+        const rowData = this.props.car.cars[index];
+        const selectedCar = this.props.car.selectedCar || {};
+
         return {
-            ...this.props.car.cars[index]
+            ...rowData,
+            isSelected: CarList.carEquality(rowData, selectedCar)
         };
     }
 
@@ -104,7 +118,8 @@ export default class CarList extends React.Component {
     }
 
     onFilterClear() {
-        this.requestData({ filter: {} })
+        this.props.resetFilters();
+        this.requestData({});
     }
 
     onSortChange(sortColumn, sortDirection) {
@@ -121,8 +136,14 @@ export default class CarList extends React.Component {
         }
     }
 
-    onRowClick() {
+    onRowClick(ignored, rowData) {
+        const selectedCar = this.props.car.selectedCar || {};
 
+        if (CarList.carEquality(selectedCar, rowData)) {
+            this.props.enableActions();
+        } else {
+            this.props.enableActions(rowData, ['change', 'delete']);
+        }
     }
 
     onPageChange(page) {
@@ -130,14 +151,14 @@ export default class CarList extends React.Component {
     }
 
     render() {
-        console.log(this.props);
+        const car = this.props.car;
 
         return (
             <div className="car-list">
                 <ReactDataGrid columns={CarList.columns}
                                minHeight={500}
                                rowGetter={this.rowGetter.bind(this)}
-                               rowsCount={this.props.car.cars.length}
+                               rowsCount={car.cars.length}
                                toolbar={<CarListFilter/>}
                                onAddFilter={this.onFilterChange.bind(this)}
                                getValidFilterValues={this.getValidFilterValues.bind(this)}
@@ -148,13 +169,18 @@ export default class CarList extends React.Component {
                                emptyRowsView={ListLoader}/>
 
                 <div style={{ textAlign: 'center' }}>
-                    <ListPaginate maxPage={this.props.car.pageable.totalPages}
-                                  currentPage={this.props.car.pageable.number}
+                    <ListPaginate maxPage={car.pageable.totalPages}
+                                  currentPage={car.pageable.number}
                                   setPage={this.onPageChange.bind(this)} />
                 </div>
 
-                <ListSpinner isShown={this.props.car.isFetching} />
+                <ListSpinner isShown={car.isFetching} />
 
+                <CarDeleteModal isOpen={car.deleteCarIsShown}
+                                isFetching={car.isFetching}
+                                modalClose={this.props.modalClose}
+                                modalAccept={this.props.modalAccept.bind(null, car.pageable)}
+                                selectedCar={car.selectedCar}/>
             </div>
         )
     }

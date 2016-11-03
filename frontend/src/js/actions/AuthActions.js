@@ -150,7 +150,7 @@ export function checkUsername(username) {
     return (dispatch) => {
         dispatch(checkUsernameRequest());
 
-        return CallApi.get(`/api/pathUsers/search/existsUsername?username=${username}`)
+        return CallApi.get(`/api/pathUsers/search/findByUsernameExists?username=${username}`)
             .then(response => {
                 const status = response.status;
 

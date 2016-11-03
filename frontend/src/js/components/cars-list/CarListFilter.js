@@ -2,6 +2,11 @@ import React from 'react';
 
 export default class CarListFilter extends React.Component {
     render() {
+        const { actions } = this.props;
+
+        const changeAllowed = actions.include('change');
+        const deleteAllowed = actions.include('delete');
+
         return (
             <div className="row filter-row">
                 <div className="col-sm-12 col-md-8 col-md-offset-4 col-lg-6 col-lg-offset-6">
@@ -22,14 +27,14 @@ export default class CarListFilter extends React.Component {
                         <div className="btn-group">
                             <button type="button"
                                     className="btn btn-default"
-                                    disabled={true}>
+                                    disabled={changeAllowed}>
                                 Изменить
                             </button>
                         </div>
                         <div className="btn-group">
                             <button type="button"
                                     className="btn btn-danger"
-                                    disabled={true}>
+                                    disabled={deleteAllowed}>
                                 Удалить
                             </button>
                         </div>

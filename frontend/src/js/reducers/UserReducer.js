@@ -71,7 +71,7 @@ export default function userReducer(state = INITIAL_STATE, action) {
         case actionTypes.USER_DELETE_REQUEST:
             return {
                 ...state,
-                isFetching: true,
+                isFetching: true
             };
 
         case actionTypes.USER_DELETE_SUCCESS:

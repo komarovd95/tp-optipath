@@ -72,3 +72,66 @@ export function carList({ number: page, size, sort }, filter) {
             });
     }
 }
+
+export function resetFilters() {
+    return {
+        type: actionTypes.CAR_LIST_FILTERS_RESET
+    }
+}
+
+export function resetList() {
+    return {
+        type: actionTypes.CAR_LIST_RESET
+    }
+}
+
+export function enableActions(selectedCar = null, actions = []) {
+    return {
+        type: actionTypes.CAR_LIST_ENABLE_ACTIONS,
+        payload: {
+            selectedCar,
+            actions
+        }
+    }
+}
+
+export function deleteModalShow() {
+    return {
+        type: actionTypes.CAR_LIST_DELETE_SHOW
+    }
+}
+
+export function deleteModalClose() {
+    return {
+        type: actionTypes.CAR_LIST_DELETE_CLOSE
+    }
+}
+
+function deleteCarRequest() {
+    return {
+        type: actionTypes.CAR_LIST_DELETE_REQUEST
+    }
+}
+
+function deleteCarSuccess() {
+    return {
+        type: actionTypes.CAR_LIST_DELETE_SUCCESS
+    }
+}
+
+function deleteCarFailure() {
+    return {
+        type: actionTypes.CAR_LIST_DELETE_FAILURE
+    }
+}
+
+export function deleteCar(pageable = {}, car) {
+    return (dispatch) => {
+        dispatch(deleteCarRequest());
+
+        return CallApi.remove(`api/cars/${car}`)
+            .then(response => {
+
+            })
+    }
+}

@@ -1,5 +1,13 @@
 import * as actionTypes from '../constants/CarActionTypes';
 
+const DEFAULT_FILTER = {
+    brand: '',
+    name: '',
+    fuelType: '',
+    fuelConsumption: '',
+    maxVelocity: ''
+};
+
 const INITIAL_STATE = {
     isFetching: false,
     cars: [],
@@ -12,13 +20,7 @@ const INITIAL_STATE = {
         },
         totalPages: 0
     },
-    filter: {
-        brand: '',
-        name: '',
-        fuelType: '',
-        fuelConsumption: '',
-        maxVelocity: ''
-    },
+    filter: DEFAULT_FILTER,
     selectedCar: null,
     actionsEnabled: [],
     deleteCarIsShown: false
@@ -51,6 +53,55 @@ export default function carReducer(state = INITIAL_STATE, action) {
                     ...state.filter,
                     ...action.payload.filter
                 }
+            };
+
+        case actionTypes.CAR_LIST_FILTERS_RESET:
+            return {
+                ...state,
+                filter: DEFAULT_FILTER
+            };
+
+        case actionTypes.CAR_LIST_RESET:
+            return INITIAL_STATE;
+
+        case actionTypes.CAR_LIST_ENABLE_ACTIONS:
+            return {
+                ...state,
+                selectedCar: action.payload.selectedCar,
+                actions: action.payload.actions
+            };
+
+        case actionTypes.CAR_LIST_DELETE_SHOW:
+            return {
+                ...state,
+                deleteCarIsShown: true
+            };
+
+        case actionTypes.CAR_LIST_DELETE_CLOSE:
+            return {
+                ...state,
+                deleteCarIsShown: false,
+                isFetching: false
+            };
+
+        case actionTypes.CAR_LIST_DELETE_REQUEST:
+            return {
+                ...state,
+                isFetching: true
+            };
+
+        case actionTypes.CAR_LIST_DELETE_SUCCESS:
+            return {
+                ...state,
+                deleteCarIsShown: false,
+                isFetching: false
+            };
+
+        case actionTypes.CAR_LIST_DELETE_FAILURE:
+            return {
+                ...state,
+                deleteCarIsShown: false,
+                isFetching: false
             };
 
         default:
