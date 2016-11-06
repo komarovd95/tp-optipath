@@ -1,12 +1,12 @@
 import React from 'react';
 
 export default class UserListFilter extends React.Component {
-    handleChange(event) {
-        this.props.changeFilter(event.target.value);
+    handleChange(e) {
+        this.props.onFilterChange(e.target.value);
     }
 
     render() {
-        const { actionsEnabled, deleteUserShow } = this.props;
+        const { actionsEnabled, onDeleteClick, placeholder } = this.props;
 
         const changePassDisabled = !actionsEnabled.includes('changePass');
         const changeRoleDisabled = !actionsEnabled.includes('changeRole');
@@ -16,7 +16,7 @@ export default class UserListFilter extends React.Component {
             <div className="row filter-row">
                 <div className="col-sm-12 col-md-6 col-lg-4">
                     <input type="text" name="filter" className="form-control"
-                           placeholder={this.props.placeholderText}
+                           placeholder={placeholder}
                            onChange={this.handleChange.bind(this)} />
                 </div>
                 <div className="col-sm-12 col-md-6 col-lg-6 col-lg-offset-2">
@@ -39,7 +39,7 @@ export default class UserListFilter extends React.Component {
                             <button type="button"
                                     className="btn btn-danger"
                                     disabled={deleteDisabled}
-                                    onClick={deleteUserShow}>
+                                    onClick={onDeleteClick}>
                                 Удалить
                             </button>
                         </div>
@@ -52,7 +52,7 @@ export default class UserListFilter extends React.Component {
 
 UserListFilter.propTypes = {
     actionsEnabled: React.PropTypes.array.isRequired,
-    deleteUserShow: React.PropTypes.func.isRequired,
-    changeFilter: React.PropTypes.func,
-    placeholderText: React.PropTypes.string
+    onDeleteClick: React.PropTypes.func.isRequired,
+    onFilterChange: React.PropTypes.func.isRequired,
+    placeholder: React.PropTypes.string
 };

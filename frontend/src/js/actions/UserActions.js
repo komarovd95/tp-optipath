@@ -24,15 +24,23 @@ function userListFailure(error) {
     }
 }
 
-export function userList({ number: page, size, sort, username }) {
+export function userList({ number: page, size, sort }, filter) {
     return (dispatch) => {
         dispatch(userListRequest());
 
-        const requestData = { page, size, username };
+        const requestData = { page, size };
 
         if (sort) {
             requestData.sort = sort.field + ','
                 + (sort.isAscending ? 'asc' : 'desc');
+        }
+
+        if (filter) {
+            for (let property in filter) {
+                if (filter.hasOwnProperty(property) && filter[property]) {
+                    requestData[property] = filter[property];
+                }
+            }
         }
 
         return CallApi.get('/api/pathUsers/search/filter?'
@@ -48,9 +56,9 @@ export function userList({ number: page, size, sort, username }) {
                         data,
                         pageable: {
                             ...response.data.page,
-                            sort,
-                            username
-                        }
+                            sort
+                        },
+                        filter
                     }));
                 } else {
                     console.log(status);
@@ -111,11 +119,11 @@ function userDeleteFailure(error) {
     }
 }
 
-export function userDelete(pageable = {}, userId) {
+export function userDelete(pageable = {}, user) {
     return (dispatch) => {
         dispatch(userDeleteRequest());
 
-        return CallApi.remove(`/api/pathUsers/${userId}`)
+        return CallApi.remove(`/api/pathUsers/${user.id}`)
             .then(response => {
                 const status = response.status;
 
@@ -123,7 +131,7 @@ export function userDelete(pageable = {}, userId) {
                     dispatch(userDeleteSuccess());
 
                     if (pageable.totalElements % pageable.size === 1) {
-                        pageable.number -= 1;
+                        pageable.number = Math.max(0, pageable.number - 1);
                     }
 
                     return dispatch(userList(pageable))

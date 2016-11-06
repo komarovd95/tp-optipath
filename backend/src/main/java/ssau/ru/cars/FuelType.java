@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Collection;
 
 @Entity
 @Table(name = "FUEL_TYPES")
@@ -15,16 +16,19 @@ public class FuelType extends DomainObject<Long> {
 
     @Column(name = "fuel_type", unique = true, nullable = false, length = 10)
     @NotNull @Size(min = 1, max = 10)
-    private String fuelType;
+    private String fuelTypeName;
 
     @Column(name = "cost", nullable = false)
     @NotNull @Min(0)
     private Double cost;
 
+    @OneToMany(mappedBy = "brand", cascade = CascadeType.REMOVE)
+    private Collection<Car> cars;
+
     public FuelType() {}
 
     public FuelType(String fuelType, Double cost) {
-        this.fuelType = fuelType;
+        this.fuelTypeName = fuelType;
         this.cost = cost;
     }
 
@@ -33,12 +37,12 @@ public class FuelType extends DomainObject<Long> {
         return id;
     }
 
-    public String getFuelType() {
-        return fuelType;
+    public String getFuelTypeName() {
+        return fuelTypeName;
     }
 
-    public void setFuelType(String fuelType) {
-        this.fuelType = fuelType;
+    public void setFuelTypeName(String fuelTypeName) {
+        this.fuelTypeName = fuelTypeName;
     }
 
     public Double getCost() {
@@ -47,5 +51,13 @@ public class FuelType extends DomainObject<Long> {
 
     public void setCost(Double cost) {
         this.cost = cost;
+    }
+
+    public Collection<Car> getCars() {
+        return cars;
+    }
+
+    public void setCars(Collection<Car> cars) {
+        this.cars = cars;
     }
 }

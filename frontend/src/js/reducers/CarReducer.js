@@ -68,7 +68,7 @@ export default function carReducer(state = INITIAL_STATE, action) {
             return {
                 ...state,
                 selectedCar: action.payload.selectedCar,
-                actions: action.payload.actions
+                actionsEnabled: action.payload.actions
             };
 
         case actionTypes.CAR_LIST_DELETE_SHOW:
@@ -102,6 +102,12 @@ export default function carReducer(state = INITIAL_STATE, action) {
                 ...state,
                 deleteCarIsShown: false,
                 isFetching: false
+            };
+
+        case actionTypes.CAR_CHANGE_CLOSE:
+            return {
+                ...state,
+                ...action.payload
             };
 
         default:

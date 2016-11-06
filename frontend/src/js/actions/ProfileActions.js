@@ -1,6 +1,6 @@
 import { browserHistory } from 'react-router';
 
-import { CHANGE_TAB, NAVIGATE_TAB } from '../constants/ProfileActionTypes';
+import { CHANGE_TAB, NAVIGATE_TAB, TRANSIT_STATE } from '../constants/ProfileActionTypes';
 
 export function changeTab(tabName) {
     return {
@@ -15,5 +15,22 @@ export function navigateTab(tabName) {
     return {
         type: NAVIGATE_TAB,
         payload: tabName
+    }
+}
+
+function transitState(tabName, state) {
+    return {
+        type: TRANSIT_STATE,
+        payload: {
+            tabName,
+            state
+        }
+    }
+}
+
+export function transitForward(tabName, stateSelect) {
+    return (dispatch, getState) => {
+        dispatch(transitState(tabName, stateSelect(getState())));
+        return changeTab(tabName)
     }
 }

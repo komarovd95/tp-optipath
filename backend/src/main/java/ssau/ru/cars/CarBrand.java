@@ -6,9 +6,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 @Entity
 @Table(name = "CAR_BRANDS")
@@ -20,15 +18,13 @@ public class CarBrand extends DomainObject<Long> {
     @NotNull @Size(min = 1, max = 50) @Pattern(regexp = "^[\\p{L}\\d\\s]+$")
     private String brandName;
 
-    @OneToMany(mappedBy = "brand")
+    @OneToMany(mappedBy = "brand", cascade = CascadeType.REMOVE)
     private Collection<Car> cars;
 
     public CarBrand() {
-        this.cars = new ArrayList<>();
     }
 
     public CarBrand(String brandName) {
-        this();
         this.brandName = brandName;
     }
 
@@ -46,14 +42,10 @@ public class CarBrand extends DomainObject<Long> {
     }
 
     public Collection<Car> getCars() {
-        return Collections.unmodifiableCollection(cars);
+        return cars;
     }
 
-    public void addCar(Car car) {
-        cars.add(car);
-    }
-
-    public void removeCar(Car car) {
-        cars.remove(car);
+    public void setCars(Collection<Car> cars) {
+        this.cars = cars;
     }
 }

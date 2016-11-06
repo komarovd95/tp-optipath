@@ -8,18 +8,20 @@ export default class ListPaginate extends React.Component {
 
     render() {
         return (
-            <ReactPaginate previousLabel="назад"
-                           nextLabel="вперед"
-                           breakLabel={<span>...</span>}
-                           breakClassName="break-me"
-                           pageNum={this.props.maxPage}
-                           forceSelected={this.props.currentPage}
-                           marginPagesDisplayed={2}
-                           pageRangeDisplayed={5}
-                           clickCallback={this.handleClick.bind(this)}
-                           containerClassName="pagination"
-                           subContainerClassName="pages pagination"
-                           activeClassName="active" />
+            <div style={{ textAlign: 'center' }}>
+                <ReactPaginate previousLabel="назад"
+                               nextLabel="вперед"
+                               breakLabel={<span>...</span>}
+                               breakClassName="break-me"
+                               pageNum={this.props.maxPage}
+                               forceSelected={this.props.currentPage}
+                               marginPagesDisplayed={2}
+                               pageRangeDisplayed={5}
+                               clickCallback={this.handleClick.bind(this)}
+                               containerClassName="pagination"
+                               subContainerClassName="pages pagination"
+                               activeClassName="active" />
+            </div>
         )
     }
 }

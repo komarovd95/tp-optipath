@@ -1,16 +1,11 @@
 import React from 'react';
-import ReactDataGrid from 'react-data-grid';
 
+import GridList from '../list/GridList';
 import NumericFilter from '../filters/NumericFilter';
 import AutoCompleteFilter from '../filters/AutoCompleteFilter';
 import TextFilter from '../filters/TextFilter';
 
-import ListLoader from '../list/EmptyList';
-import ListPaginate from '../list/ListPaginate';
-import ListSpinner from '../list/ListSpinner';
-
-import CarListFilter from '../../containers/CarFilterContainer';
-import CarDeleteModal from './CarDeleteModal';
+import CarListFilter from './CarListFilter';
 
 export default class CarList extends React.Component {
     static columns = [
@@ -51,139 +46,129 @@ export default class CarList extends React.Component {
         }
     ];
 
-    static rowSelectionSettings = {
-        showCheckbox: false,
-        selectBy: {
-            isSelectedKey: 'isSelected'
-        }
-    };
-
-    static carEquality(c1, c2) {
-        return (c1.brand === c2.brand && c1.name === c2.name
-            && c1.fuelType === c2.fuelType)
-    }
-
-    constructor() {
-        super();
-        this.requestData = this.requestData.bind(this);
-    }
-
-    componentDidMount() {
-        this.props.requestData({});
-    }
-
-    componentWillUnmount() {
-        this.props.resetList();
-    }
-
-    requestData({ page, sort, filter }) {
-        const pageable = { ...this.props.car.pageable };
-        const newFilter = { ...this.props.car.filter };
-
-        console.log('pageable', pageable);
-
-        if (page || page === 0) {
-            pageable.number = page;
-        }
-
-        if (sort) {
-            pageable.sort = sort;
-        }
-
-        if (filter) {
-            newFilter[filter.column] = filter.filterTerm;
-        }
-
-        this.props.requestData(pageable, newFilter);
-    }
-
-    rowGetter(index) {
-        const rowData = this.props.car.cars[index];
-        const selectedCar = this.props.car.selectedCar || {};
+    static rowGetter(data, selected, i) {
+        const rowData = data[i];
+        const rowSelected = selected || {};
 
         return {
             ...rowData,
-            isSelected: CarList.carEquality(rowData, selectedCar)
-        };
-    }
-
-    onFilterChange({ column, filterTerm }) {
-        this.requestData({ filter: { column: column.key, filterTerm } })
-    }
-
-    getValidFilterValues(columnId) {
-        const values = this.props.car.cars.map(c => c[columnId]);
-        return [CarList.columns.find(c => c.key === columnId).name]
-            .concat(values.filter((item, i, a) => i == a.indexOf(item)))
-    }
-
-    onFilterClear() {
-        this.props.resetFilters();
-        this.requestData({});
-    }
-
-    onSortChange(sortColumn, sortDirection) {
-        switch (sortDirection) {
-            case 'NONE':
-                this.requestData({ sort: { field: 'brand', isAscending: true }});
-                break;
-            case 'ASC':
-                this.requestData({ sort: { field: sortColumn, isAscending: true }});
-                break;
-            case 'DESC':
-                this.requestData({ sort: { field: sortColumn, isAscending: false }});
-                break;
+            brand: rowData.brandName,
+            fuelType: rowData.fuelTypeName,
+            isSelected: rowData.id === rowSelected.id
         }
     }
 
-    onRowClick(ignored, rowData) {
-        const selectedCar = this.props.car.selectedCar || {};
+    static message(car) {
+        return (
+            <p>
+                Вы уверены, что хотите удалить автомобиль
+                <b>
+                    {car && ` ${car.brand} ${car.name} (${car.fuelType})`}
+                </b>?
+            </p>
+        )
+    }
 
-        if (CarList.carEquality(selectedCar, rowData)) {
+    componentDidMount() {
+        this.props.cacheLoad();
+    }
+
+    onRowClick(ignored, rowData) {
+        const selectedCar = this.props.selectedCar || {};
+
+        if (rowData.id === selectedCar.id) {
             this.props.enableActions();
         } else {
             this.props.enableActions(rowData, ['change', 'delete']);
         }
     }
 
-    onPageChange(page) {
-        this.requestData({ page });
+    onClearFilters() {
+        this.props.resetFilters({ ...this.props.pageable });
+    }
+
+    getValidFilterValues(columnId) {
+        return [CarList.columns.find(c => c.key === columnId).name]
+            .concat(this.props[columnId + 's']
+                .map(item => item[columnId + 'Name']))
     }
 
     render() {
-        const car = this.props.car;
+        const {
+            cars, selectedCar, pageable, filter, isFetching, resetList, requestData,
+            deleteCarIsShown, modalClose, modalAccept,
+            actionsEnabled, onChangeClick, onDeleteClick
+        } = this.props;
+
+        const toolbar = (
+            <CarListFilter actions={actionsEnabled}
+                           onChangeClick={onChangeClick}
+                           onDeleteClick={onDeleteClick}/>
+        );
 
         return (
-            <div className="car-list">
-                <ReactDataGrid columns={CarList.columns}
-                               minHeight={500}
-                               rowGetter={this.rowGetter.bind(this)}
-                               rowsCount={car.cars.length}
-                               toolbar={<CarListFilter/>}
-                               onAddFilter={this.onFilterChange.bind(this)}
-                               getValidFilterValues={this.getValidFilterValues.bind(this)}
-                               onClearFilters={this.onFilterClear.bind(this)}
-                               onGridSort={this.onSortChange.bind(this)}
-                               rowSelection={CarList.rowSelectionSettings}
-                               onRowClick={this.onRowClick.bind(this)}
-                               emptyRowsView={ListLoader}/>
-
-                <div style={{ textAlign: 'center' }}>
-                    <ListPaginate maxPage={car.pageable.totalPages}
-                                  currentPage={car.pageable.number}
-                                  setPage={this.onPageChange.bind(this)} />
-                </div>
-
-                <ListSpinner isShown={car.isFetching} />
-
-                <CarDeleteModal isOpen={car.deleteCarIsShown}
-                                isFetching={car.isFetching}
-                                modalClose={this.props.modalClose}
-                                modalAccept={this.props.modalAccept.bind(null, car.pageable)}
-                                selectedCar={car.selectedCar}/>
-            </div>
+            <GridList className="car-list"
+                      data={cars}
+                      columns={CarList.columns}
+                      rowGetter={CarList.rowGetter}
+                      selected={selectedCar}
+                      toolbar={toolbar}
+                      isFetching={isFetching}
+                      pageable={{
+                          maxPage: pageable.totalPages,
+                          currentPage: pageable.number,
+                          size: pageable.size
+                      }}
+                      filter={filter}
+                      requestData={requestData}
+                      defaultSort={{ field: 'brand', isAscending: true }}
+                      deleteModal={{
+                          title: 'Удалить автомобиль',
+                          isOpen: deleteCarIsShown,
+                          message: CarList.message,
+                          onModalAccept: modalAccept.bind(null, pageable),
+                          onModalClose: modalClose
+                      }}
+                      onRowClick={this.onRowClick.bind(this)}
+                      getValidFilterValues={this.getValidFilterValues.bind(this)}
+                      onClearFilters={this.onClearFilters.bind(this, pageable)}
+                      resetList={resetList} />
         )
     }
 }
 
-CarList.propTypes = {};
+CarList.propTypes = {
+    cars: React.PropTypes.array.isRequired,
+    selectedCar: React.PropTypes.object,
+    isFetching: React.PropTypes.bool.isRequired,
+    actionsEnabled: React.PropTypes.array.isRequired,
+    enableActions: React.PropTypes.func.isRequired,
+    onDeleteClick: React.PropTypes.func.isRequired,
+    onChangeClick: React.PropTypes.func.isRequired,
+    pageable: React.PropTypes.shape({
+        totalPages: React.PropTypes.number,
+        number: React.PropTypes.number,
+        sort: React.PropTypes.shape({
+            field: React.PropTypes.string.isRequired,
+            isAscending: React.PropTypes.bool.isRequired
+        })
+    }).isRequired,
+    filter: React.PropTypes.shape({
+        brand: React.PropTypes.string.isRequired,
+        name: React.PropTypes.string.isRequired,
+        fuelType: React.PropTypes.string.isRequired,
+        fuelConsumption: React.PropTypes.string.isRequired,
+        maxVelocity: React.PropTypes.string.isRequired
+    }).isRequired,
+    deleteCarIsShown: React.PropTypes.bool.isRequired,
+    modalAccept: React.PropTypes.func.isRequired,
+    modalClose: React.PropTypes.func.isRequired,
+    requestData: React.PropTypes.func.isRequired,
+    resetList: React.PropTypes.func.isRequired,
+    resetFilters: React.PropTypes.func.isRequired,
+    cacheLoad: React.PropTypes.func.isRequired
+};
+
+CarList.defaultProps = {
+    selectedCar: {}
+};

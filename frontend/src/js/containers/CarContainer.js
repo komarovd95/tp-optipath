@@ -1,22 +1,48 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import CarList from '../components/cars-list/CarList';
-import { carList, resetFilters, resetList, enableActions } from '../actions/CarActions';
+import CarList2 from '../components/cars-list/CarList';
+import {
+    carList, resetFilters, resetList, enableActions, deleteModalClose, deleteCar,
+    carCacheLoad, openCarChange, deleteModalShow
+} from '../actions/CarActions';
 
 function mapStateToProps(state) {
+    const {
+        cars, selectedCar, isFetching, pageable, filter, deleteCarIsShown,
+        actionsEnabled
+    } = state.car;
+    const { brands, fuelTypes } = state.carCache;
+
     return {
-        car: state.car
+        cars,
+        selectedCar,
+        isFetching,
+        pageable,
+        filter,
+        deleteCarIsShown,
+        actionsEnabled,
+        brands,
+        fuelTypes
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         requestData: (pageable, filter) => dispatch(carList(pageable, filter)),
-        resetFilters: () => dispatch(resetFilters()),
+        resetFilters: (pageable) => {
+            dispatch(resetFilters());
+            dispatch(carList(pageable))
+        },
         resetList: () => dispatch(resetList()),
-        enableActions: (selected, actions) => dispatch(enableActions(selected, actions))
+        enableActions: (selected, actions) =>
+            dispatch(enableActions(selected, actions)),
+        modalAccept: (pageable, car) => dispatch(deleteCar(pageable, car)),
+        modalClose: () => dispatch(deleteModalClose()),
+        cacheLoad: () => dispatch(carCacheLoad(false)),
+        onDeleteClick: () => dispatch(deleteModalShow()),
+        onChangeClick: (action) => dispatch(openCarChange(action))
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CarList);
+export default connect(mapStateToProps, mapDispatchToProps)(CarList2);

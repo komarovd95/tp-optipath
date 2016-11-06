@@ -8,9 +8,11 @@ const INITIAL_STATE = {
         size: 20,
         sort: {
             field: 'id',
-            isAscending: false
+            isAscending: true
         },
-        totalPages: 0,
+        totalPages: 0
+    },
+    filter: {
         username: ''
     },
     selectedUser: null,
@@ -36,6 +38,10 @@ export default function userReducer(state = INITIAL_STATE, action) {
                 pageable: {
                     ...state.pageable,
                     ...action.payload.pageable
+                },
+                filter: {
+                    ...state.filter,
+                    ...action.payload.filter
                 }
             };
 

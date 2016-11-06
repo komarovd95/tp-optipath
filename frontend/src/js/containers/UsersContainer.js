@@ -1,24 +1,40 @@
 import { connect } from 'react-redux';
 
 import UserList from '../components/user-list/UserList';
-import { userList, userListReset, userEnableActions, userDeleteModalClose, userDelete } from '../actions/UserActions';
+import {
+    userList, userListReset, userEnableActions, userDeleteModalClose, userDelete,
+    userDeleteModalShow
+} from '../actions/UserActions';
 
 function mapStateToProps(state) {
-    const { auth, user } = state;
+    const {
+        auth : { user : loggedUser },
+        user : {
+            users, selectedUser, isFetching, pageable, filter, deleteUserIsShown,
+            actionsEnabled
+        }
+    } = state;
 
     return {
-        auth,
-        user
+        users,
+        selectedUser,
+        loggedUser,
+        isFetching,
+        pageable,
+        filter,
+        deleteUserIsShown,
+        actionsEnabled
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        requestList: (pageable) => dispatch(userList(pageable)),
-        reset: () => dispatch(userListReset()),
-        enableUserActions: (id, actions) => dispatch(userEnableActions(id, actions)),
+        requestData: (pageable, filter) => dispatch(userList(pageable, filter)),
+        resetList: () => dispatch(userListReset()),
+        enableActions: (id, actions) => dispatch(userEnableActions(id, actions)),
+        modalAccept: (pageable, user) => dispatch(userDelete(pageable, user)),
         modalClose: () => dispatch(userDeleteModalClose()),
-        modalAccept: (pageable, userId) => dispatch(userDelete(pageable, userId))
+        onDeleteClick: () => dispatch(userDeleteModalShow())
     }
 }
 

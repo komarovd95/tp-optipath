@@ -6,9 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ssau.ru.DomainObject;
-import ssau.ru.graph.Car;
 import ssau.ru.graph.PathGraph;
-import ssau.ru.graph.Route;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

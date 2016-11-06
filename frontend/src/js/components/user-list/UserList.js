@@ -1,26 +1,13 @@
 import React from 'react';
-import ReactDataGrid from 'react-data-grid';
 
-import ListPaginate from '../list/ListPaginate';
-import ListLoader from '../list/EmptyList';
-import ListSpinner from '../list/ListSpinner';
-
+import GridList from '../list/GridList';
 import UserLink from './UserLink';
-import UserDeleteModal from './UserDeleteModal';
-import UserListFilterContainer from '../../containers/UsersActionContainer';
+import UserListFilter from './UserListFilter';
 
 const ADMIN = 'Администратор';
 const USER = 'Пользователь';
 
 export default class UserList extends React.Component {
-    static rolesToString(roles) {
-        return roles.includes('ROLE_ADMIN') ? ADMIN : USER;
-    }
-
-    static isAdmin(roles) {
-        return roles === ADMIN || roles.includes(ADMIN);
-    }
-
     static columns = [
         {
             key: 'id',
@@ -46,74 +33,44 @@ export default class UserList extends React.Component {
         }
     ];
 
-    constructor() {
-        super();
-        this.requestData = this.requestData.bind(this);
+    static rolesToString(roles) {
+        return roles.includes('ROLE_ADMIN') ? ADMIN : USER;
     }
 
-    componentDidMount() {
-        this.props.requestList({});
-
-        const profilePage = jQuery('.profile-page');
-
-        const pageHeight = profilePage.height();
-        const headerHeight = profilePage.find('h1').outerHeight(true);
-        const filterHeight = profilePage.find('.user-list > .filter-row').outerHeight(true);
-        const paginateHeight = profilePage.find('ul.pagination').outerHeight(true);
-
-        this.minHeight = (pageHeight - headerHeight - filterHeight
-            - paginateHeight - 20) || 350;
+    static isAdmin(roles) {
+        return roles === ADMIN || roles.includes(ADMIN);
     }
 
-    componentWillUnmount() {
-        this.props.reset();
+    static rowGetter(data, selected, i) {
+        const rowData = data[i];
+        const rowSelected = selected || {};
+
+        return {
+            ...rowData,
+            isSelected: rowData.id === rowSelected.id,
+            updatedAt: new Date(rowData.updatedAt).toLocaleString('ru'),
+            roles: UserList.rolesToString(rowData.roles)
+        };
     }
 
-    requestData({ page, filter, sort }) {
-        const pageable = { ...this.props.user.pageable };
-
-        if (page || page === 0) {
-            pageable.number = page;
-        }
-
-        if (filter || filter === '') {
-            pageable.username = filter;
-        }
-
-        if (sort) {
-            pageable.sort = sort;
-        }
-
-        this.props.requestList(pageable);
+    static message(data) {
+        return (
+            <p>
+                Вы уверены, что хотите удалить пользователя с именем
+                <b>{data && (' ' + data.username)}</b>?
+            </p>
+        )
     }
 
-    onFilterChange(filter) {
-        this.requestData({ filter });
-    }
-
-    onSortChange(sortColumn, sortDirection) {
-        switch (sortDirection) {
-            case 'NONE':
-                this.requestData({ sort: { field: 'id', isAscending: true }});
-                break;
-            case 'ASC':
-                this.requestData({ sort: { field: sortColumn, isAscending: true } });
-                break;
-            case 'DESC':
-                this.requestData({ sort: { field: sortColumn, isAscending: false } });
-                break;
-        }
-    }
-
-    onRowClick(ignoredParam, rowData) {
-        const currentUser = this.props.auth.user;
-        const selectedUser = this.props.user.selectedUser || {};
-        const enableActions = this.props.enableUserActions;
+    onRowClick(ignored, rowData) {
+        const loggedUser = this.props.loggedUser;
+        const selectedUser = this.props.selectedUser || {};
+        const enableActions = this.props.enableActions;
 
         if (selectedUser.id === rowData.id) {
             enableActions();
-        } else if (currentUser.id === rowData.id) {
-            enableActions(currentUser, ['changePass']);
+        } else if (loggedUser.id === rowData.id) {
+            enableActions(loggedUser, ['changePass']);
         } else if (!UserList.isAdmin(rowData.roles)) {
             enableActions(rowData, ['changePass', 'changeRole', 'delete']);
         } else {
@@ -121,61 +78,79 @@ export default class UserList extends React.Component {
         }
     }
 
-    onPageChange(page) {
-        this.requestData({ page });
-    }
-
-    rowGetter(index) {
-        const row = this.props.user.users[index];
-        const selectedUser = this.props.user.selectedUser || {};
-
-        return {
-            ...row,
-            isSelected: selectedUser.id === row.id,
-            updatedAt: new Date(row.updatedAt).toLocaleString('ru'),
-            roles: UserList.rolesToString(row.roles)
-        };
+    onFilterChange(filterTerm) {
+        this.props.requestData(this.props.pageable, { username: filterTerm });
     }
 
     render() {
-        const { user } = this.props;
-        const { pageable } = user;
+        const {
+            users, selectedUser, isFetching, pageable, resetList, requestData,
+            deleteUserIsShown, modalAccept, modalClose, filter,
+            actionsEnabled, onDeleteClick
+        } = this.props;
 
-        const rowSelectionSettings = {
-            showCheckbox: false,
-            selectBy: {
-                isSelectedKey: 'isSelected'
-            }
-        };
+        const toolbar = (
+            <UserListFilter actionsEnabled={actionsEnabled}
+                            onDeleteClick={onDeleteClick}
+                            onFilterChange={this.onFilterChange.bind(this)}
+                            placeholder="Имя пользователя" />
+        );
 
         return (
-            <div className="user-list">
-                <UserListFilterContainer changeFilter={this.onFilterChange.bind(this)}
-                                         placeholderText="Имя пользователя..."/>
-
-                <ReactDataGrid columns={UserList.columns}
-                               minHeight={this.minHeight}
-                               rowGetter={this.rowGetter.bind(this)}
-                               rowsCount={user.users.length}
-                               onGridSort={this.onSortChange.bind(this)}
-                               rowSelection={rowSelectionSettings}
-                               onRowClick={this.onRowClick.bind(this)}
-                               emptyRowsView={ListLoader} />
-
-                <div style={{ textAlign: 'center' }}>
-                    <ListPaginate maxPage={pageable.totalPages}
-                                  currentPage={pageable.number}
-                                  setPage={this.onPageChange.bind(this)}/>
-                </div>
-
-                <ListSpinner isShown={user.isFetching} />
-
-                <UserDeleteModal isOpen={user.deleteUserIsShown}
-                                 isFetching={user.isFetching}
-                                 modalClose={this.props.modalClose}
-                                 modalAccept={this.props.modalAccept.bind(null, pageable)}
-                                 selectedUser={user.selectedUser}/>
-            </div>
+            <GridList className="user-list"
+                      data={users}
+                      columns={UserList.columns}
+                      rowGetter={UserList.rowGetter}
+                      selected={selectedUser}
+                      toolbar={toolbar}
+                      isFetching={isFetching}
+                      pageable={{
+                          maxPage: pageable.totalPages,
+                          currentPage: pageable.number,
+                          size: pageable.size
+                      }}
+                      filter={filter}
+                      requestData={requestData}
+                      defaultSort={{ field: 'id', isAscending: true }}
+                      deleteModal={{
+                          title: 'Удалить пользователя',
+                          isOpen: deleteUserIsShown,
+                          message: UserList.message,
+                          onModalAccept: modalAccept.bind(null, pageable),
+                          onModalClose: modalClose
+                      }}
+                      onRowClick={this.onRowClick.bind(this)}
+                      resetList={resetList} />
         )
     }
 }
+
+UserList.propTypes = {
+    users: React.PropTypes.array.isRequired,
+    selectedUser: React.PropTypes.object,
+    loggedUser: React.PropTypes.object.isRequired,
+    isFetching: React.PropTypes.bool.isRequired,
+    pageable: React.PropTypes.shape({
+        totalPages: React.PropTypes.number,
+        number: React.PropTypes.number,
+        sort: React.PropTypes.shape({
+            field: React.PropTypes.string.isRequired,
+            isAscending: React.PropTypes.bool.isRequired
+        })
+    }).isRequired,
+    filter: React.PropTypes.shape({
+        username: React.PropTypes.string.isRequired
+    }).isRequired,
+    deleteUserIsShown: React.PropTypes.bool.isRequired,
+    actionsEnabled: React.PropTypes.array.isRequired,
+    requestData: React.PropTypes.func.isRequired,
+    resetList: React.PropTypes.func.isRequired,
+    modalAccept: React.PropTypes.func.isRequired,
+    modalClose: React.PropTypes.func.isRequired,
+    enableActions: React.PropTypes.func.isRequired,
+    onDeleteClick: React.PropTypes.func.isRequired
+};
+
+UserList.defaultProps = {
+    selectedUser: {}
+};

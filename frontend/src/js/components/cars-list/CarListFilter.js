@@ -2,10 +2,10 @@ import React from 'react';
 
 export default class CarListFilter extends React.Component {
     render() {
-        const { actions } = this.props;
+        const { actions, onDeleteClick, onChangeClick } = this.props;
 
-        const changeAllowed = actions.include('change');
-        const deleteAllowed = actions.include('delete');
+        const changeAllowed = actions.includes('change');
+        const deleteAllowed = actions.includes('delete');
 
         return (
             <div className="row filter-row">
@@ -20,21 +20,24 @@ export default class CarListFilter extends React.Component {
                             </button>
                         </div>
                         <div className="btn-group">
-                            <button type="button" className="btn btn-default">
+                            <button type="button" className="btn btn-default"
+                                    onClick={onChangeClick.bind(null, 'add')}>
                                 Добавить
                             </button>
                         </div>
                         <div className="btn-group">
                             <button type="button"
                                     className="btn btn-default"
-                                    disabled={changeAllowed}>
+                                    disabled={!changeAllowed}
+                                    onClick={onChangeClick.bind(null, 'update')}>
                                 Изменить
                             </button>
                         </div>
                         <div className="btn-group">
                             <button type="button"
                                     className="btn btn-danger"
-                                    disabled={deleteAllowed}>
+                                    disabled={!deleteAllowed}
+                                    onClick={onDeleteClick}>
                                 Удалить
                             </button>
                         </div>
@@ -45,4 +48,8 @@ export default class CarListFilter extends React.Component {
     }
 }
 
-CarListFilter.propTypes = {};
+CarListFilter.propTypes = {
+    actions: React.PropTypes.array.isRequired,
+    onDeleteClick: React.PropTypes.func.isRequired,
+    onChangeClick: React.PropTypes.func.isRequired
+};

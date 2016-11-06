@@ -1,7 +1,5 @@
 package ssau.ru.cars;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import ssau.ru.DomainObject;
 
 import javax.persistence.*;
@@ -19,9 +17,8 @@ public class Car extends DomainObject<Long> {
     private Long id;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "car_brand")
+    @JoinColumn(name = "car_brand", nullable = false)
     @NotNull @Valid
-    @JsonIgnore
     private CarBrand brand;
 
     @Column(name = "car_name", nullable = false, length = 50)
@@ -33,25 +30,13 @@ public class Car extends DomainObject<Long> {
     private Integer maxVelocity;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "fuel_type")
+    @JoinColumn(name = "fuel_type", nullable = false)
     @NotNull @Valid
-    @JsonIgnore
     private FuelType fuelType;
 
     @Column(name = "fuel_consumption", nullable = false)
     @NotNull @Min(0)
     private Double fuelConsumption;
-
-    public Car() {}
-
-    public Car(CarBrand brand, String name, Integer maxVelocity, FuelType fuelType,
-               Double fuelConsumption) {
-        this.brand = brand;
-        this.name = name;
-        this.maxVelocity = maxVelocity;
-        this.fuelType = fuelType;
-        this.fuelConsumption = fuelConsumption;
-    }
 
     @Override
     public Long getId() {
@@ -98,13 +83,11 @@ public class Car extends DomainObject<Long> {
         this.fuelConsumption = fuelConsumption;
     }
 
-    @JsonProperty("brand")
     public String getBrandName() {
         return brand.getBrandName();
     }
 
-    @JsonProperty("fuelType")
     public String getFuelTypeName() {
-        return fuelType.getFuelType();
+        return fuelType.getFuelTypeName();
     }
 }

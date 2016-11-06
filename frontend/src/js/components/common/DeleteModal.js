@@ -1,7 +1,7 @@
 import React from 'react';
 import Modal from 'react-modal';
 
-export default class UserDeleteModal extends React.Component {
+export default class DeleteModal extends React.Component {
     static style = {
         overlay: {
             zIndex: 1030
@@ -20,38 +20,32 @@ export default class UserDeleteModal extends React.Component {
         }
     };
 
-    handleClick() {
-        this.props.modalAccept(this.props.selectedUser.id);
-    }
-
     render() {
-        const { modalClose: close, selectedUser, isFetching } = this.props;
+        const {
+            title, message, isOpen, onModalAccept, onModalClose, data, isFetching
+        } = this.props;
 
         return (
-            <Modal isOpen={this.props.isOpen}
-                   style={UserDeleteModal.style}
-                   onRequestClose={close}>
+            <Modal isOpen={isOpen} style={DeleteModal.style}
+                   onRequestClose={onModalClose}>
                 <div className="modal-content">
                     <div className="modal-header">
                         <button type="button" className="close" aria-label="Close"
-                                onClick={close}>
+                                onClick={onModalClose}>
                             <span aria-hidden="true">&times;</span>
                         </button>
-                        <h4 className="modal-title">Удалить пользователя</h4>
+                        <h4 className="modal-title">{title}</h4>
                     </div>
                     <div className="modal-body">
-                        <p>
-                            Вы уверены, что хотите удалить пользователя с именем
-                            <b>{selectedUser && (' ' + selectedUser.username)}</b>?
-                        </p>
+                        {message && message(data)}
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-default"
-                                onClick={close}>
+                                onClick={onModalClose}>
                             Нет
                         </button>
                         <button type="button" className="btn btn-primary"
-                                onClick={this.handleClick.bind(this)}>
+                                onClick={onModalAccept.bind(null, data)}>
                             { isFetching && (
                                 <span className="glyphicon glyphicon-repeat normal-right-spinner"
                                       style={{ marginRight: '15px'}} />
@@ -65,10 +59,12 @@ export default class UserDeleteModal extends React.Component {
     }
 }
 
-UserDeleteModal.propTypes = {
+DeleteModal.propTypes = {
+    title: React.PropTypes.string.isRequired,
+    data: React.PropTypes.object,
+    message: React.PropTypes.func.isRequired,
     isOpen: React.PropTypes.bool.isRequired,
-    modalClose: React.PropTypes.func.isRequired,
-    modalAccept: React.PropTypes.func.isRequired,
-    selectedUser: React.PropTypes.object.isRequired,
-    isFetching: React.PropTypes.bool.isRequired
+    isFetching: React.PropTypes.bool.isRequired,
+    onModalClose: React.PropTypes.func.isRequired,
+    onModalAccept: React.PropTypes.func.isRequired
 };

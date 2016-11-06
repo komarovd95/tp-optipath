@@ -90,12 +90,12 @@ public class BackendApplication implements CommandLineRunner {
             System.out.println(u.getUsername() + " : " + u.getPathGraphs());
         }
 
-        CarBrand brand = new CarBrand("BMW");
+        CarBrand brand = new CarBrand("BMP");
         ssau.ru.cars.FuelType fuelType = new FuelType("GAS", 10.0);
-        Car car = new Car(brand, "X56", 180, fuelType, 10.0);
+        //Car car = new Car(brand, "X56", 180, fuelType, 10.0);
 
         carBrandRepository.save(brand);
         fuelTypeRepository.save(fuelType);
-        carRepository.save(car);
+        //carRepository.save(car);
     }
 }

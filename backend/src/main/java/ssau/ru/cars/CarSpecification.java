@@ -33,7 +33,7 @@ class CarSpecification implements Specification<Car> {
         }
 
         if (criteria.getFuelType() != null) {
-            specifications.add(new StringCriteria(root.get("fuelType").get("fuelType"),
+            specifications.add(new StringCriteria(root.get("fuelType").get("fuelTypeName"),
                     criteria.getFuelType()).toEqualsSpecification());
         }
 

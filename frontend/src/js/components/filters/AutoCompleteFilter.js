@@ -12,7 +12,7 @@ export default class AutoCompleteFilter extends React.Component {
     componentDidMount() {
         this.setState({
             selected: this.props.getValidFilterValues(this.props.column.key)[0]
-        })
+        });
     }
 
     handleChange(e) {

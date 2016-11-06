@@ -6,6 +6,8 @@ import ProfileSidebarContainer from '../containers/ProfileSidebarContainer';
 import UsersContainer from '../containers/UsersContainer';
 import UserProfileContainer from '../containers/UserProfileContainer';
 import CarContainer from '../containers/CarContainer';
+import CarChangeContainer from '../containers/CarChangeContainer';
+import BrandContainer from '../containers/BrandContainer';
 
 import ProfileTab from '../components/profile/ProfileTab';
 
@@ -21,6 +23,7 @@ export default class ProfilePage extends React.Component {
         [
             { tabName: 'usersDB', tabDisplayName: 'Пользователи' },
             { tabName: 'carsDB', tabDisplayName: 'Автомобили' },
+            { tabName: 'brandsDB', tabDisplayName: 'Марки авто' },
             { tabName: 'routesDB', tabDisplayName: 'Маршруты' }
         ],
         [
@@ -51,6 +54,13 @@ export default class ProfilePage extends React.Component {
                         </ProfileTab>
                         <ProfileTab tabName="carsDB" tabDisplayName="Автомобили">
                             <CarContainer/>
+                        </ProfileTab>
+                        <ProfileTab tabName="brandsDB" tabDisplayName="Марки авто">
+                            <BrandContainer/>
+                        </ProfileTab>
+                        <ProfileTab tabName="carChange"
+                                    tabDisplayName="Добавить/Изменить автомобиль">
+                            <CarChangeContainer/>
                         </ProfileTab>
                     </ProfileContainer>
                 </div>
