@@ -50,7 +50,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                     .antMatchers(PATHS).permitAll()
                     .antMatchers(HttpMethod.POST, "/api/pathUsers").permitAll()
-                    .antMatchers(HttpMethod.GET, "/api/pathUsers/search/existsUsername").permitAll()
+                    .antMatchers(HttpMethod.GET,
+                            "/api/pathUsers/search/findByUsernameExists").permitAll()
                     .antMatchers(HttpMethod.GET, "/api/pathUsers").hasRole("ADMIN")
                 .anyRequest().authenticated().and()
                 .csrf().disable();

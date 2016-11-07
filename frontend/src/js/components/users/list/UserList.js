@@ -1,6 +1,6 @@
 import React from 'react';
 
-import GridList from '../list/GridList';
+import GridList from '../../list/GridList';
 import UserLink from './UserLink';
 import UserListFilter from './UserListFilter';
 

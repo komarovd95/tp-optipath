@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Navigation from '../containers/NavContainer';
+import Notification from '../containers/ErrorContainer';
 import Animation from '../components/common/Animation';
 
 export default class AppPage extends React.Component {
@@ -10,6 +11,7 @@ export default class AppPage extends React.Component {
         return (
             <div style={{ height: '100%' }}>
                 <Navigation/>
+                <Notification/>
                 <Animation>
                     {React.cloneElement(this.props.children, { key: pathname })}
                 </Animation>

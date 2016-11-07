@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 
-import UserList from '../components/user-list/UserList';
+import UserList from '../components/users/list/UserList';
 import {
     userList, userListReset, userEnableActions, userDeleteModalClose, userDelete,
     userDeleteModalShow

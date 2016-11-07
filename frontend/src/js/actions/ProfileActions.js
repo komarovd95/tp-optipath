@@ -17,20 +17,3 @@ export function navigateTab(tabName) {
         payload: tabName
     }
 }
-
-function transitState(tabName, state) {
-    return {
-        type: TRANSIT_STATE,
-        payload: {
-            tabName,
-            state
-        }
-    }
-}
-
-export function transitForward(tabName, stateSelect) {
-    return (dispatch, getState) => {
-        dispatch(transitState(tabName, stateSelect(getState())));
-        return changeTab(tabName)
-    }
-}

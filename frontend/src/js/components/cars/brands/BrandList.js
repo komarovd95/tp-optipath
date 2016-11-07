@@ -1,6 +1,6 @@
 import React from 'react';
 
-import GridList from '../list/GridList';
+import GridList from '../../list/GridList';
 import BrandListFilter from './BrandListFilter';
 
 export default class BrandList extends React.Component {

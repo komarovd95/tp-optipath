@@ -32,7 +32,7 @@ export default function authReducer(state = INITIAL_STATE, action) {
             return {
                 ...state,
                 user: null,
-                error: action.payload,
+                error: action.error,
                 isAuthenticated: false,
                 isFetching: false
             };

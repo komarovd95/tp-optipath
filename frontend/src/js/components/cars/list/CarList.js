@@ -1,9 +1,9 @@
 import React from 'react';
 
-import GridList from '../list/GridList';
-import NumericFilter from '../filters/NumericFilter';
-import AutoCompleteFilter from '../filters/AutoCompleteFilter';
-import TextFilter from '../filters/TextFilter';
+import GridList from '../../list/GridList';
+import NumericFilter from '../../filters/NumericFilter';
+import AutoCompleteFilter from '../../filters/AutoCompleteFilter';
+import TextFilter from '../../filters/TextFilter';
 
 import CarListFilter from './CarListFilter';
 

@@ -21,7 +21,9 @@ function signInSuccess(user) {
 function signInFailure(error) {
     return {
         type: actionTypes.SIGNIN_FAILURE,
-        payload: error
+        payload: true,
+        globalError: true,
+        error: error
     }
 }
 
@@ -32,6 +34,8 @@ function principalRequest() {
 }
 
 export function signIn(redirectUrl = '/', { username, password }) {
+    const ERROR = 'Не удалось войти в систему. Повторите запрос позже';
+
     return (dispatch) => {
         dispatch(signInRequest());
 
@@ -44,25 +48,24 @@ export function signIn(redirectUrl = '/', { username, password }) {
         return CallApi.post('/signin',
             querystring.stringify({ username, password }), config)
             .then(response => {
-                const { status } = response;
+                const status = response.status;
 
                 if (status === 200) {
                     return dispatch(principalRequest());
                 } else {
-                    return Promise.reject(response);
+                    dispatch(signInFailure(ERROR));
+                    return Promise.reject(status);
                 }
             }, error => {
-                console.log('error:', error);
                 const { status, data: { message } } = error.response;
 
                 if (status === 401) {
-                    dispatch(signInFailure(message));
+                    dispatch(signInFailure());
                     throw new SubmissionError({
                         _error: message
                     })
                 } else {
-                    dispatch(signInFailure(status));
-                    alert('Не удалось войти в систему. Повторите запрос позже');
+                    dispatch(signInFailure(ERROR));
                     return Promise.reject(status);
                 }
             })
@@ -70,19 +73,19 @@ export function signIn(redirectUrl = '/', { username, password }) {
                 const { status, data } = response;
 
                 if (status === 200) {
-                    dispatch(signInSuccess(data));
-
                     if (window.sessionStorage) {
                         window.sessionStorage.setItem('path-user',
                             JSON.stringify(data));
                     }
 
+                    dispatch(signInSuccess(data));
+
                     browserHistory.replace(redirectUrl);
 
                     return Promise.resolve(data);
                 } else {
-                    dispatch(signInFailure(data));
-                    return Promise.reject(data);
+                    dispatch(signInFailure(ERROR));
+                    return Promise.reject(status);
                 }
             });
     };
@@ -94,20 +97,18 @@ function signUpRequest() {
     }
 }
 
-function signUpSuccess() {
-    return {
-        type: actionTypes.SIGNUP_SUCCESS
-    }
-}
-
 function signUpFailure(error) {
     return {
         type: actionTypes.SIGNUP_FAILURE,
-        payload: error
+        payload: true,
+        globalError: true,
+        error: error
     }
 }
 
 export function signUp({ username, password }) {
+    const ERROR = 'Не удалось зарегистрироваться. Повторите запрос позже';
+
     return (dispatch) => {
         dispatch(signUpRequest());
 
@@ -120,33 +121,47 @@ export function signUp({ username, password }) {
         return CallApi.post('/api/pathUsers',
             JSON.stringify({ username, password }), config)
             .then(response => {
-                const { status, data } = response;
+                const { status } = response;
 
                 if (status === 201) {
-                    dispatch(signUpSuccess());
+                    //dispatch(signUpSuccess());
                     return dispatch(signIn('http://localhost:3000/me',
                         { username, password }));
                 } else {
-                    dispatch(signUpFailure(status));
-                    return Promise.reject();
+                    dispatch(signUpFailure(ERROR));
+                    return Promise.reject(status);
                 }
             }, error => {
                 const { status, data } = error.response;
 
-                dispatch(signUpFailure(data));
                 if (status === 500) {
+                    dispatch(signUpFailure());
                     throw new SubmissionError({
                         _error : data.message
                     });
                 } else {
-                    alert('Непредвиденная ошибка на сервере. Повторите запрос позже');
-                    return Promise.reject(data);
+                    dispatch(signUpFailure(ERROR));
+                    return Promise.reject(status);
                 }
             });
     }
 }
 
+function checkUsernameRequest() {
+    return {
+        type: actionTypes.CHECK_USERNAME_REQUEST
+    }
+}
+
+function checkUsernameAccept() {
+    return {
+        type: actionTypes.CHECK_USERNAME_ACCEPT
+    }
+}
+
 export function checkUsername(username) {
+    const ERROR = 'Ошибка на сервере. Повторите запрос позже';
+
     return (dispatch) => {
         dispatch(checkUsernameRequest());
 
@@ -163,21 +178,19 @@ export function checkUsername(username) {
                         return Promise.resolve();
                     }
                 } else {
-                    return Promise.reject();
+                    dispatch({ payload: true, error: ERROR });
+                    return Promise.reject(status);
                 }
             }, error => {
                 const status = error.response.status;
-                console.log(status);
                 dispatch(checkUsernameAccept());
+                dispatch({ payload: true, error: ERROR });
                 return Promise.reject(status);
             });
     };
 }
 
 function signOutSuccess() {
-    browserHistory.replace('/');
-    window.sessionStorage.removeItem('path-user');
-
     return {
         type: actionTypes.SIGNOUT_SUCCESS
     }
@@ -189,23 +202,14 @@ export function signOut() {
             .then(response => {
                 const status = response.status;
 
+                browserHistory.replace('/');
+                window.sessionStorage.removeItem('path-user');
+
                 dispatch(signOutSuccess());
 
                 if (status !== 200) {
                     return Promise.reject(status);
                 }
             });
-    }
-}
-
-function checkUsernameRequest() {
-    return {
-        type: actionTypes.CHECK_USERNAME_REQUEST
-    }
-}
-
-function checkUsernameAccept() {
-    return {
-        type: actionTypes.CHECK_USERNAME_ACCEPT
     }
 }

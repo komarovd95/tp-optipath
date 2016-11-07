@@ -377,3 +377,65 @@ export function carCacheLoad(forced) {
         }
     }
 }
+
+function brandListRequest() {
+    return {
+        type: actionTypes.CAR_BRAND_LIST_REQUEST
+    }
+}
+
+function brandListSuccess(brands) {
+    return {
+        type: actionTypes.CAR_BRAND_LIST_SUCCESS,
+        payload: brands
+    }
+}
+
+function brandListFailure(error) {
+    return {
+        type: actionTypes.CAR_BRAND_LIST_FAILURE,
+        payload: error
+    }
+}
+
+export function brandList({ number: page, size, sort }, filter) {
+    return (dispatch) => {
+        dispatch(brandListRequest());
+
+        const requestData = { page, size };
+
+        if (sort) {
+            requestData.sort = sort.field + ',' + (sort.isAscending ? 'asc': 'desc');
+        }
+
+        if (filter) {
+            for (let property in filter) {
+                if (filter.hasOwnProperty(property) && filter[property]) {
+                    requestData[property] = filter[property];
+                }
+            }
+        }
+
+        return CallApi.get('/api/carBrands/search/findAllByBrandNameLike?'
+            + window.decodeURIComponent(querystring.stringify(requestData)))
+            .then(response => {
+                const status = response.status;
+
+                if (status === 200) {
+                    const data = response.data._embedded
+                        && response.data._embedded.carBrands;
+
+                    dispatch(brandListSuccess(data));
+
+                    return Promise.resolve(data);
+                } else {
+                    console.log(status);
+                    return Promise.reject(status);
+                }
+            }, error => {
+                console.log(error);
+                dispatch(brandListFailure(error));
+                return Promise.reject(error);
+            })
+    }
+}

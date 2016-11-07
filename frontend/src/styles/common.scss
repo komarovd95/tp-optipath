@@ -124,3 +124,9 @@ body {
   left: 4px;
   margin-top: 6px;
 }
+
+.notification {
+  z-index: 10000;
+  bottom: 60px !important;
+  font-size: 12px !important;
+}

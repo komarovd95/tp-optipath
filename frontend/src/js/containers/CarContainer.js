@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import CarList2 from '../components/cars-list/CarList';
+import CarList2 from '../components/cars/list/CarList';
 import {
     carList, resetFilters, resetList, enableActions, deleteModalClose, deleteCar,
     carCacheLoad, openCarChange, deleteModalShow

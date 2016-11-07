@@ -7,7 +7,7 @@ import UsersContainer from '../containers/UsersContainer';
 import UserProfileContainer from '../containers/UserProfileContainer';
 import CarContainer from '../containers/CarContainer';
 import CarChangeContainer from '../containers/CarChangeContainer';
-import BrandContainer from '../containers/BrandContainer';
+import BrandContainer from '../containers/CarBrandContainer';
 
 import ProfileTab from '../components/profile/ProfileTab';
 

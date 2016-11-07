@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';
 
 import { validateField } from '../util/FormUtil';
-import CarChangeForm from '../components/cars-list/CarChangeForm';
+import CarChangeForm from '../components/cars/CarChangeForm';
 import { saveCar, closeCarChange, checkCarExists } from '../actions/CarActions';
 
 function validate(values) {
