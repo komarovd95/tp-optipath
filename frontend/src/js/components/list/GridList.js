@@ -10,7 +10,14 @@ import DeleteModal from '../common/DeleteModal';
 export default class GridList extends React.Component {
     constructor() {
         super();
+        this.minHeight = this.minHeight.bind(this);
         this.requestData = this.requestData.bind(this);
+        this.onSortChange = this.onSortChange.bind(this);
+        this.onFilterChange = this.onFilterChange.bind(this);
+        this.onPageChange = this.onPageChange.bind(this);
+        this.onRowGet = this.onRowGet.bind(this);
+        this.onCellSelected = this.onCellSelected.bind(this);
+        this.getSelectionSettings = this.getSelectionSettings.bind(this);
     }
 
     minHeight() {
@@ -88,46 +95,46 @@ export default class GridList extends React.Component {
         return this.props.data[index];
     }
 
-    static getSelectionSettings(selected) {
+    getSelectionSettings() {
         return {
             showCheckbox: false,
             selectBy: {
-                indexes: [selected]
+                indexes: [this.props.selected]
             }
         }
     }
 
     render() {
         const {
-            className, columns, minHeight, data, selected, toolbar,
-            onRowClick, pageable, isFetching, deleteModal, onClearFilter,
-            getValidFilterValues, enableCellSelect, onRowUpdated
+            className, columns, data, toolbar, selected, pageable, isFetching,
+            deleteModal, enableCellSelect,
+            minHeight, getValidFilterValues, onClearFilters,
+            onRowSelected, onRowUpdated
         } = this.props;
 
         const height = minHeight ? minHeight(this.minHeight) : this.minHeight();
+        const selectionSettings = this.getSelectionSettings();
 
         return (
             <div className={className}>
                 <ReactDataGrid ref="grid"
                                columns={columns}
                                minHeight={height}
-                               rowGetter={this.onRowGet.bind(this)}
+                               rowGetter={this.onRowGet}
                                rowsCount={data.length}
                                toolbar={toolbar}
-                               onGridSort={this.onSortChange.bind(this)}
-                               onAddFilter={this.onFilterChange.bind(this)}
-                               getValidFilterValues={getValidFilterValues
-                                    && getValidFilterValues.bind(this)}
-                               onClearFilters={onClearFilter}
-                               rowSelection={GridList.getSelectionSettings(selected)}
-                               onRowClick={onRowClick}
+                               onGridSort={this.onSortChange}
+                               onAddFilter={this.onFilterChange}
+                               getValidFilterValues={getValidFilterValues}
+                               onClearFilters={onClearFilters}
+                               rowSelection={selectionSettings}
+                               onRowClick={onRowSelected}
                                emptyRowsView={EmptyList}
                                enableCellSelect={enableCellSelect}
-                               onCellSelected={this.onCellSelected.bind(this)}
+                               onCellSelected={this.onCellSelected}
                                onRowUpdated={onRowUpdated} />
 
-                <ListPaginate setPage={this.onPageChange.bind(this)}
-                              {...pageable} />
+                <ListPaginate setPage={this.onPageChange} {...pageable} />
 
                 <ListSpinner isShown={isFetching} />
 
@@ -139,6 +146,7 @@ export default class GridList extends React.Component {
 }
 
 GridList.propTypes = {
+    className: React.PropTypes.string,
     data: React.PropTypes.array.isRequired,
     selected: React.PropTypes.number,
     columns: React.PropTypes.arrayOf(React.PropTypes.shape({
@@ -149,7 +157,6 @@ GridList.propTypes = {
         filterRenderer: React.PropTypes.any
     })).isRequired,
     minHeight: React.PropTypes.func,
-    rowGetter: React.PropTypes.func,
     toolbar: React.PropTypes.element,
     requestData: React.PropTypes.func.isRequired,
     resetList: React.PropTypes.func.isRequired,
@@ -161,9 +168,8 @@ GridList.propTypes = {
         field: React.PropTypes.string.isRequired,
         direction: React.PropTypes.string.isRequired
     }),
-    onClearFilter: React.PropTypes.func,
+    onClearFilters: React.PropTypes.func,
     getValidFilterValues: React.PropTypes.func,
-    onRowClick: React.PropTypes.func,
     pageable: React.PropTypes.shape({
         totalPages: React.PropTypes.number.isRequired,
         number: React.PropTypes.number.isRequired,
@@ -179,6 +185,7 @@ GridList.propTypes = {
         onModalAccept: React.PropTypes.func.isRequired
     }),
     enableCellSelect: React.PropTypes.bool,
+    onRowSelected: React.PropTypes.func,
     onRowUpdated: React.PropTypes.func
 };
 

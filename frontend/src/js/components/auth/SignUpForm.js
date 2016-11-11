@@ -9,6 +9,7 @@ export default class SignUpForm extends React.Component {
 
         return (
             <form onSubmit={handleSubmit(signUpUser.bind(this))}>
+                <img src="./img/logo.png" className="hidden-xs hidden-sm"/>
                 <h2>Регистрация</h2>
 
                 <Field name="username" type="text" component={renderField}

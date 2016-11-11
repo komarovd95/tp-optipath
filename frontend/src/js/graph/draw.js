@@ -17,18 +17,18 @@ export function draw() {
     // create connections between people
     // value corresponds with the amount of contact between two people
     const edges = [
-        {from: 2, to: 8, value: 1, title: '3 emails per week'},
-        {from: 8, to: 2, value: 1, title: '9 email'},
-        {from: 2, to: 9, value: 5, title: '5 emails per week'},
-        {from: 2, to: 10,value: 1, title: '1 emails per week'},
-        {from: 4, to: 6, value: 8, title: '8 emails per week'},
-        {from: 5, to: 7, value: 2, title: '2 emails per week'},
-        {from: 4, to: 5, value: 1, title: '1 emails per week'},
-        {from: 9, to: 10,value: 2, title: '2 emails per week'},
-        {from: 2, to: 3, value: 6, title: '6 emails per week'},
-        {from: 3, to: 9, value: 4, title: '4 emails per week'},
-        {from: 5, to: 3, value: 1, title: '1 emails per week'},
-        {from: 2, to: 7, value: 4, title: '4 emails per week'}
+        {from: 2, to: 8, value: 1 },
+        {from: 8, to: 2, value: 1 },
+        {from: 2, to: 9, value: 5 },
+        {from: 2, to: 10,value: 1 },
+        {from: 4, to: 6, value: 8 },
+        {from: 5, to: 7, value: 2 },
+        {from: 4, to: 5, value: 1 },
+        {from: 9, to: 10,value: 2 },
+        {from: 2, to: 3, value: 6 },
+        {from: 3, to: 9, value: 4 },
+        {from: 5, to: 3, value: 1 },
+        {from: 2, to: 7, value: 4 }
     ];
 
     // Instantiate our network object.

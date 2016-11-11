@@ -11,7 +11,7 @@ export default class NavBar extends React.Component {
                 <div className="container-fluid">
                     <div className="navbar-header">
                         <Link to="/" className="navbar-brand">
-                            <img alt="OptiPath" src="./logo.png" />
+                            <img alt="OptiPath" src="./img/logo.png" />
                         </Link>
                         <button type="button" className="navbar-toggle collapsed"
                                 data-toggle="collapse"

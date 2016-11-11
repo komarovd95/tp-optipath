@@ -13,7 +13,7 @@ export default class SignInForm extends React.Component {
 
         return (
             <form onSubmit={handleSubmit(signInUser.bind(this, nextPath))}>
-                <img src="./logo.png" className="hidden-xs hidden-sm"/>
+                <img src="./img/logo.png" className="hidden-xs hidden-sm"/>
                 <h2>Вход в учетную запись</h2>
 
                 <Field name="username" type="text" component={renderField}

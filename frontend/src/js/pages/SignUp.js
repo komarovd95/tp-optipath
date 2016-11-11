@@ -15,7 +15,6 @@ export default class SignUp extends React.Component {
                     <span>&times;</span>
                 </button>
                 <div className="content">
-                    <img src="./logo.png" className="hidden-xs hidden-sm"/>
                     <SignUpContainer />
                 </div>
             </div>

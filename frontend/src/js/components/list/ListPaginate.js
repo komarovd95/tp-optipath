@@ -2,6 +2,11 @@ import React from 'react';
 import ReactPaginate from 'react-paginate';
 
 export default class ListPaginate extends React.Component {
+    constructor() {
+        super();
+        this.handleClick = this.handleClick.bind(this);
+    }
+
     handleClick({ selected }) {
         this.props.setPage(selected);
     }
@@ -17,7 +22,7 @@ export default class ListPaginate extends React.Component {
                                forceSelected={this.props.number}
                                marginPagesDisplayed={2}
                                pageRangeDisplayed={5}
-                               clickCallback={this.handleClick.bind(this)}
+                               clickCallback={this.handleClick}
                                containerClassName="pagination"
                                subContainerClassName="pages pagination"
                                activeClassName="active" />
