@@ -4,12 +4,12 @@ const INITIAL_STATE = {
 };
 
 export default function errorReducer(state = INITIAL_STATE, action) {
-    if (action.error && action.globalError) {
+    if (action.globalError || (action.payload && action.payload.globalError)) {
         console.log('Error', action.error);
 
         return {
             ...state,
-            error: action.error,
+            error: action.error || action.payload.error,
             dismissable: action.payload
         }
     }

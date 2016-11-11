@@ -119,7 +119,7 @@ function userDeleteFailure(error) {
     }
 }
 
-export function userDelete(pageable = {}, user) {
+export function userDelete(pageable = {}, filter, user) {
     return (dispatch) => {
         dispatch(userDeleteRequest());
 
@@ -134,7 +134,7 @@ export function userDelete(pageable = {}, user) {
                         pageable.number = Math.max(0, pageable.number - 1);
                     }
 
-                    return dispatch(userList(pageable))
+                    return dispatch(userList(pageable, filter))
                 } else {
                     console.log(response);
                     return Promise.reject(status);

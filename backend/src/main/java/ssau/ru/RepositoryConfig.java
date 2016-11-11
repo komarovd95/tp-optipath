@@ -22,7 +22,7 @@ public class RepositoryConfig extends RepositoryRestConfigurerAdapter {
     @Override
     public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
         config.exposeIdsFor(PathNode.class, PathGraph.class, PathUser.class,
-                Car.class);
+                Car.class, CarBrand.class);
     }
 
     @Override

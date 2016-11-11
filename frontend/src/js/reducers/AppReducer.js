@@ -15,6 +15,11 @@ import carChangeReducer from './CarChangeReducer';
 import carCacheReducer from './CarCacheReducer';
 import carBrandReducer from './CarBrandReducer';
 
+import UsersReducer from './users/UsersReducer';
+import CarsReducer from './cars/CarsReducer';
+import BrandsReducer from './brands/BrandsReducer';
+
+
 const appReducer = combineReducers({
     auth: authReducer,
     error: errorReducer,
@@ -24,6 +29,9 @@ const appReducer = combineReducers({
     carChange: carChangeReducer,
     carCache: carCacheReducer,
     carBrand: carBrandReducer,
+    users: UsersReducer,
+    cars: CarsReducer,
+    brands: BrandsReducer,
     routing: routerReducer,
     form: formReducer
 });

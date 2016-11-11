@@ -13,8 +13,8 @@ export default class ListPaginate extends React.Component {
                                nextLabel="вперед"
                                breakLabel={<span>...</span>}
                                breakClassName="break-me"
-                               pageNum={this.props.maxPage}
-                               forceSelected={this.props.currentPage}
+                               pageNum={this.props.totalPages}
+                               forceSelected={this.props.number}
                                marginPagesDisplayed={2}
                                pageRangeDisplayed={5}
                                clickCallback={this.handleClick.bind(this)}
@@ -28,7 +28,7 @@ export default class ListPaginate extends React.Component {
 
 
 ListPaginate.propTypes = {
-    maxPage: React.PropTypes.number.isRequired,
-    currentPage: React.PropTypes.number.isRequired,
+    totalPages: React.PropTypes.number.isRequired,
+    number: React.PropTypes.number.isRequired,
     setPage: React.PropTypes.func.isRequired
 };

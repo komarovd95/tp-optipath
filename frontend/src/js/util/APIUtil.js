@@ -1,5 +1,6 @@
 import axios from 'axios';
 import url from 'url';
+import Qs from 'querystring';
 
 export class CallApi {
     static get(urlString, data, config) {
@@ -16,6 +17,31 @@ export class CallApi {
 
     static remove(urlString, data, config) {
         return axios.delete(transformUrl(urlString), data, createConfig(config));
+    }
+
+    static fetchList(urlString, pageable, sort, filter, filterInclude = false) {
+        const requestData = {};
+
+        if (pageable) {
+            requestData.page = pageable.number;
+            requestData.size = pageable.size;
+        }
+
+        if (sort) {
+            requestData.sort = sort.field + ',' + sort.direction;
+        }
+
+        if (filter) {
+            for (let property in filter) {
+                if (filter.hasOwnProperty(property)
+                    && (filterInclude || filter[property])) {
+                    requestData[property] = filter[property];
+                }
+            }
+        }
+
+        return CallApi.get(urlString + '?'
+            + window.decodeURIComponent(Qs.stringify(requestData)));
     }
 
     static signIn(token) {

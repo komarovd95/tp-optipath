@@ -2,6 +2,7 @@ import querystring from 'querystring';
 import axios from 'axios';
 import { SubmissionError } from 'redux-form';
 
+import { globalError } from './CommonActions';
 import * as actionTypes from '../constants/CarActionTypes';
 import { CallApi } from '../util/APIUtil';
 import { changeTab } from './ProfileActions';
@@ -22,11 +23,15 @@ function carListSuccess(carsInfo) {
 function carListFailure(error) {
     return {
         type: actionTypes.CAR_LIST_FAILURE,
-        payload: error
+        payload: true,
+        globalError: true,
+        error: error
     }
 }
 
 export function carList({ number: page, size, sort }, filter) {
+    const ERROR = 'Не удалось загрузить список автомобилей. Повторите запрос позже';
+
     return (dispatch) => {
         dispatch(carListRequest());
 
@@ -62,15 +67,14 @@ export function carList({ number: page, size, sort }, filter) {
                         filter
                     }));
 
-                    return Promise.resolve(data);
+                    return dispatch(carCacheLoad(false));
                 } else {
-                    console.log(status);
-                    return Promise.reject();
+                    dispatch(carListFailure(ERROR));
+                    return Promise.reject(status);
                 }
             }, error => {
-                dispatch(carListFailure(error));
-                alert('Ошибка на сервере. Повторите запрос позже');
-                return Promise.reject(error);
+                dispatch(carListFailure(ERROR));
+                return Promise.reject(error.response.status);
             });
     }
 }
@@ -121,13 +125,18 @@ function deleteCarSuccess() {
     }
 }
 
-function deleteCarFailure() {
+function deleteCarFailure(error) {
     return {
-        type: actionTypes.CAR_LIST_DELETE_FAILURE
+        type: actionTypes.CAR_LIST_DELETE_FAILURE,
+        payload: true,
+        globalError: true,
+        error: error
     }
 }
 
-export function deleteCar(pageable = {}, car) {
+export function deleteCar(pageable = {}, filter, car) {
+    const ERROR = 'Ошибка при удалении автомобиля';
+
     return (dispatch) => {
         dispatch(deleteCarRequest());
 
@@ -142,15 +151,14 @@ export function deleteCar(pageable = {}, car) {
                         pageable.number = Math.max(0, pageable.number - 1);
                     }
 
-                    return dispatch(carList(pageable))
+                    return dispatch(carList(pageable, filter))
                 } else {
-                    console.log(response);
+                    dispatch(deleteCarFailure(ERROR));
                     return Promise.reject(status);
                 }
             }, error => {
-                alert('Непредвиденная ошибка. Повторите запрос позже');
-                dispatch(deleteCarFailure(error.response.data.message));
-                return Promise.reject(error);
+                dispatch(deleteCarFailure(ERROR));
+                return Promise.reject(error.response.status);
             })
     }
 }
@@ -209,6 +217,8 @@ function checkCarAccept() {
 }
 
 export function checkCarExists(car, action) {
+    const ERROR = 'Ошибка при регистрации. Попробуйте позже';
+
     return (dispatch) => {
         dispatch(checkCarRequest());
 
@@ -244,13 +254,13 @@ export function checkCarExists(car, action) {
 
                     return Promise.resolve()
                 } else {
+                    dispatch(globalError(ERROR));
                     return Promise.reject()
                 }
             }, error => {
-                const status = error.response.status;
-                console.log(status);
                 dispatch(checkCarAccept());
-                return Promise.reject(status);
+                dispatch(globalError(ERROR));
+                return Promise.reject(error.response.status);
             })
     }
 }
@@ -267,13 +277,18 @@ function saveCarSuccess() {
     }
 }
 
-function saveCarFailure() {
+function saveCarFailure(error) {
     return {
-        type: actionTypes.CAR_CHANGE_SAVE_FAILURE
+        type: actionTypes.CAR_CHANGE_SAVE_FAILURE,
+        payload: true,
+        globalError: true,
+        error: error
     }
 }
 
 export function saveCar(action, data) {
+    const ERROR = 'Не удалось сохранить автомобиль. Повторите запрос позже';
+
     return (dispatch, getState) => {
         dispatch(saveCarRequest());
 
@@ -313,22 +328,20 @@ export function saveCar(action, data) {
                 dispatch(saveCarSuccess());
                 return dispatch(closeCarChange())
             } else {
-                console.log(status);
+                dispatch(saveCarFailure(ERROR));
                 return Promise.reject(status);
             }
         }, error => {
             const { status, data } = error.response;
 
-            dispatch(saveCarFailure());
             if (status === 500) {
-                if (status === 500) {
-                    throw new SubmissionError({
-                        _error : data.message
-                    });
-                } else {
-                    alert('Непредвиденная ошибка на сервере. Повторите запрос позже');
-                    return Promise.reject(data);
-                }
+                dispatch(saveCarFailure());
+                throw new SubmissionError({
+                    _error : data.message
+                });
+            } else {
+                dispatch(saveCarFailure(ERROR));
+                return Promise.reject(status);
             }
         })
     }
@@ -348,6 +361,8 @@ function carCacheLoadSuccess(cache) {
 }
 
 export function carCacheLoad(forced) {
+    const ERROR = 'Ошибка при загрузке данных. Попробуйте позже';
+
     return (dispatch, getState) => {
         dispatch(carCacheLoadRequest());
 
@@ -370,10 +385,21 @@ export function carCacheLoad(forced) {
 
                         return Promise.resolve();
                     } else {
-                        console.log(status1, status2);
+                        dispatch(globalError(ERROR));
                         return Promise.reject();
                     }
-                }))
+                }), error => {
+                    dispatch(globalError(ERROR));
+                    return Promise.reject(error);
+                })
+        } else {
+            return new Promise(resolve => {
+                dispatch(carCacheLoadSuccess({
+                    brands: oldCache.brands,
+                    fuelTypes: oldCache.fuelTypes
+                }));
+                return resolve();
+            })
         }
     }
 }
@@ -394,12 +420,18 @@ function brandListSuccess(brands) {
 function brandListFailure(error) {
     return {
         type: actionTypes.CAR_BRAND_LIST_FAILURE,
-        payload: error
+        payload: true,
+        globalError: true,
+        error: error
     }
 }
 
 export function brandList({ number: page, size, sort }, filter) {
-    return (dispatch) => {
+    const ERROR = 'Ошибка при загрузке данных. Повторите запрос позже';
+
+    return (dispatch, getState) => {
+        const selectedBrand = getState().carBrand.selectedBrand;
+
         dispatch(brandListRequest());
 
         const requestData = { page, size };
@@ -410,13 +442,13 @@ export function brandList({ number: page, size, sort }, filter) {
 
         if (filter) {
             for (let property in filter) {
-                if (filter.hasOwnProperty(property) && filter[property]) {
+                if (filter.hasOwnProperty(property)) {
                     requestData[property] = filter[property];
                 }
             }
         }
 
-        return CallApi.get('/api/carBrands/search/findAllByBrandNameLike?'
+        return CallApi.get('/api/carBrands/search/findAllByBrandNameContainingIgnoreCase?'
             + window.decodeURIComponent(querystring.stringify(requestData)))
             .then(response => {
                 const status = response.status;
@@ -427,15 +459,214 @@ export function brandList({ number: page, size, sort }, filter) {
 
                     dispatch(brandListSuccess(data));
 
+                    if (selectedBrand) {
+                        dispatch(enableBrandActions());
+                    }
                     return Promise.resolve(data);
                 } else {
-                    console.log(status);
+                    dispatch(brandListFailure(ERROR));
                     return Promise.reject(status);
                 }
             }, error => {
-                console.log(error);
-                dispatch(brandListFailure(error));
-                return Promise.reject(error);
+                dispatch(brandListFailure(ERROR));
+                return Promise.reject(error.response.status);
             })
+    }
+}
+
+export function resetBrandList() {
+    return {
+        type: actionTypes.CAR_BRAND_LIST_RESET
+    }
+}
+
+export function enableBrandActions(selectedBrand = null, actionsEnabled = []) {
+    return {
+        type: actionTypes.CAR_BRAND_ENABLE_ACTIONS,
+        payload: {
+            selectedBrand,
+            actionsEnabled
+        }
+    }
+}
+
+export function deleteBrandShow() {
+    return {
+        type: actionTypes.CAR_BRAND_DELETE_SHOW
+    }
+}
+
+export function deleteBrandClose() {
+    return {
+        type: actionTypes.CAR_BRAND_DELETE_CLOSE
+    }
+}
+
+function deleteBrandRequest() {
+    return {
+        type: actionTypes.CAR_BRAND_DELETE_REQUEST
+    }
+}
+
+function deleteBrandSuccess() {
+    return {
+        type: actionTypes.CAR_BRAND_DELETE_SUCCESS
+    }
+}
+
+function deleteBrandFailure(error) {
+    return {
+        type: actionTypes.CAR_BRAND_DELETE_FAILURE,
+        payload: true,
+        globalError: true,
+        error: error
+    }
+}
+
+export function deleteBrand(pageable = {}, filter, brand) {
+    const ERROR = 'Ошибка при удалении марки автомобиля';
+
+    return (dispatch) => {
+        dispatch(deleteBrandRequest());
+
+        return CallApi.remove(`/api/carBrands/${brand.id}`)
+            .then(response => {
+                const status = response.status;
+
+                if (status === 204) {
+                    dispatch(deleteBrandSuccess());
+
+                    if (pageable.totalElements % pageable.size === 1) {
+                        pageable.number = Math.max(0, pageable.number - 1);
+                    }
+
+                    return dispatch(brandList(pageable, filter))
+                } else {
+                    dispatch(deleteBrandFailure(ERROR));
+                    return Promise.reject(status);
+                }
+            }, error => {
+                dispatch(deleteBrandFailure(ERROR));
+                return Promise.reject(error.response.status);
+            })
+    }
+}
+
+function saveBrandRequest() {
+    return {
+        type: actionTypes.CAR_BRAND_SAVE_REQUEST
+    }
+}
+
+function saveBrandSuccess() {
+    return {
+        type: actionTypes.CAR_BRAND_SAVE_SUCCESS
+    }
+}
+
+function saveBrandFailure(error) {
+    return {
+        type: actionTypes.CAR_BRAND_SAVE_FAILURE,
+        payload: true,
+        globalError: true,
+        error: error
+    }
+}
+
+export function saveBrand(action, brand) {
+    const ERROR = 'Не удалось сохранить марку автомобиля';
+
+    return (dispatch, getState) => {
+        dispatch(saveBrandRequest());
+
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+
+        const { pageable, selectedBrand, brands } = getState().carBrand;
+
+        const requestData = {
+            brandName: brand.brandName
+        };
+
+        if (action === 'change') {
+            requestData.id = selectedBrand.id;
+            requestData.brandName = brands.find(b => b.id === selectedBrand.id)
+                .brandName;
+        }
+
+        const call = (action ==='add')
+            ? CallApi.post('/api/carBrands', JSON.stringify(requestData), config)
+            : CallApi.patch(`/api/carBrands/${requestData.id}`, JSON.stringify(requestData), config);
+
+        const successStatus = (action === 'add') ? 201 : 200;
+
+        return call.then(response => {
+            const status = response.status;
+
+            if (status === successStatus) {
+                dispatch(saveBrandSuccess());
+                return dispatch(carCacheLoad(true));
+            } else {
+                dispatch(saveBrandFailure(ERROR));
+                return Promise.reject(status);
+            }
+        }, error => {
+            const { status } = error.response;
+
+            if (status === 500) {
+                dispatch(saveBrandFailure());
+                return Promise.reject({
+                    error: 'Такая марка уже существует'
+                });
+            } else {
+                dispatch(saveBrandFailure(ERROR));
+                return Promise.reject(status);
+            }
+        }).then(ignored => {
+            dispatch(brandList(pageable, { brandName: '' }));
+        })
+    }
+}
+
+export function updateBrandRow(index, { brandName }) {
+    return (dispatch, getState) => {
+        if (brandName && brandName.length < 50
+            && brandName.match(/^[а-яА-ЯЁёa-zA-Z\d\s]+$/)) {
+
+            const { brands, selectedBrand } = getState().carBrand;
+
+            const oldValue = brands[index];
+
+            if (oldValue.brandName !== brandName) {
+                const newValue = { ...oldValue };
+
+                if (newValue.touched) {
+                    if (newValue.updated.brandName === brandName) {
+                        delete newValue.touched;
+                        delete newValue.updated;
+                        dispatch(enableBrandActions(selectedBrand, ['delete']));
+                    }
+
+                    newValue.brandName = brandName;
+                } else {
+                    newValue.touched = true;
+                    newValue.updated = {
+                        brandName: newValue.brandName
+                    };
+                    newValue.brandName = brandName;
+                    dispatch(enableBrandActions(selectedBrand, ['change', 'delete']));
+                }
+
+                const newBrands = brands.slice(0, index);
+                newBrands.push(newValue);
+                dispatch({
+                    type: actionTypes.CAR_BRAND_CHANGE_ROW,
+                    payload: newBrands.concat(brands.slice(index + 1))
+                });
+            }
+        }
     }
 }

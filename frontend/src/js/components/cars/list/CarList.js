@@ -69,10 +69,6 @@ export default class CarList extends React.Component {
         )
     }
 
-    componentDidMount() {
-        this.props.cacheLoad();
-    }
-
     onRowClick(ignored, rowData) {
         const selectedCar = this.props.selectedCar || {};
 
@@ -126,7 +122,7 @@ export default class CarList extends React.Component {
                           title: 'Удалить автомобиль',
                           isOpen: deleteCarIsShown,
                           message: CarList.message,
-                          onModalAccept: modalAccept.bind(null, pageable),
+                          onModalAccept: modalAccept.bind(null, pageable, filter),
                           onModalClose: modalClose
                       }}
                       onRowClick={this.onRowClick.bind(this)}

@@ -3,11 +3,16 @@ import React from 'react';
 
 import ProfileContainer from '../containers/ProfileContainer';
 import ProfileSidebarContainer from '../containers/ProfileSidebarContainer';
-import UsersContainer from '../containers/UsersContainer';
 import UserProfileContainer from '../containers/UserProfileContainer';
-import CarContainer from '../containers/CarContainer';
-import CarChangeContainer from '../containers/CarChangeContainer';
-import BrandContainer from '../containers/CarBrandContainer';
+
+
+import UsersListContainer from '../containers/users/UsersListContainer';
+import UsersListFilterContainer from '../containers/users/UsersListFilterContainer';
+import CarsListContainer from '../containers/cars/CarsListContainer';
+import CarsListFilterContainer from '../containers/cars/CarsListFilterContainer';
+import CarsFromContainer from '../containers/cars/CarsFormContainer';
+import BrandsListContainer from  '../containers/brands/BrandsListContainer';
+import BrandsListFilterContainer from '../containers/brands/BrandsListFilterContainer';
 
 import ProfileTab from '../components/profile/ProfileTab';
 
@@ -23,7 +28,8 @@ export default class ProfilePage extends React.Component {
         [
             { tabName: 'usersDB', tabDisplayName: 'Пользователи' },
             { tabName: 'carsDB', tabDisplayName: 'Автомобили' },
-            { tabName: 'brandsDB', tabDisplayName: 'Марки авто' },
+            { tabName: 'brandsDB', tabDisplayName: 'Марки' },
+            { tabName: 'fuelTypesDB', tabDisplayName: 'Типы топлива' },
             { tabName: 'routesDB', tabDisplayName: 'Маршруты' }
         ],
         [
@@ -50,17 +56,20 @@ export default class ProfilePage extends React.Component {
                             <p>Halo</p>
                         </ProfileTab>
                         <ProfileTab tabName="usersDB" tabDisplayName="Пользователи">
-                            <UsersContainer/>
+                            <UsersListContainer toolbar={<UsersListFilterContainer/>}/>
                         </ProfileTab>
                         <ProfileTab tabName="carsDB" tabDisplayName="Автомобили">
-                            <CarContainer/>
+                            <CarsListContainer toolbar={<CarsListFilterContainer/>}/>
                         </ProfileTab>
-                        <ProfileTab tabName="brandsDB" tabDisplayName="Марки авто">
-                            <BrandContainer/>
+                        <ProfileTab tabName="brandsDB" tabDisplayName="Марки">
+                            <BrandsListContainer toolbar={<BrandsListFilterContainer/>}/>
                         </ProfileTab>
-                        <ProfileTab tabName="carChange"
+                        <ProfileTab tabName="fuelTypesDB" tabDisplayName="Типы топлива">
+                            <p>Hello</p>
+                        </ProfileTab>
+                        <ProfileTab tabName="carsForm"
                                     tabDisplayName="Добавить/Изменить автомобиль">
-                            <CarChangeContainer/>
+                            <CarsFromContainer/>
                         </ProfileTab>
                     </ProfileContainer>
                 </div>

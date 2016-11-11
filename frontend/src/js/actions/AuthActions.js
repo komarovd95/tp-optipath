@@ -178,13 +178,13 @@ export function checkUsername(username) {
                         return Promise.resolve();
                     }
                 } else {
-                    dispatch({ payload: true, error: ERROR });
+                    dispatch({ payload: true, globalError: true, error: ERROR });
                     return Promise.reject(status);
                 }
             }, error => {
                 const status = error.response.status;
                 dispatch(checkUsernameAccept());
-                dispatch({ payload: true, error: ERROR });
+                dispatch({ payload: true, globalError: true, error: ERROR });
                 return Promise.reject(status);
             });
     };

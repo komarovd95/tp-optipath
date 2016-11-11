@@ -2,8 +2,8 @@ import React from 'react';
 import { Notification } from 'react-notification';
 
 export default class ErrorNotification extends React.Component {
-    handleClick(deactivate) {
-        if (this.props.dismissable) deactivate();
+    handleClick() {
+        if (this.props.dismissable) this.props.onDismiss();
     }
 
     handleDismiss() {
@@ -20,6 +20,7 @@ export default class ErrorNotification extends React.Component {
                           onClick={this.handleClick.bind(this)}
                           onDismiss={this.handleDismiss.bind(this)}
                           action="закрыть"
+                          className="notification-top"
                           activeClassName="notification alert-danger"
                           dismissAfter={4000} />
         )

@@ -116,7 +116,7 @@ export default class UserList extends React.Component {
                           title: 'Удалить пользователя',
                           isOpen: deleteUserIsShown,
                           message: UserList.message,
-                          onModalAccept: modalAccept.bind(null, pageable),
+                          onModalAccept: modalAccept.bind(null, pageable, filter),
                           onModalClose: modalClose
                       }}
                       onRowClick={this.onRowClick.bind(this)}

@@ -8,23 +8,6 @@ import ListSpinner from './ListSpinner';
 import DeleteModal from '../common/DeleteModal';
 
 export default class GridList extends React.Component {
-    static settings = {
-        showCheckbox: false,
-        selectBy: {
-            isSelectedKey: 'isSelected'
-        }
-    };
-
-    static rowGetter(data, selected, i) {
-        const rowData = data[i];
-        const rowSelected = selected || {};
-
-        return {
-            ...rowData,
-            isSelected: rowData.id === rowSelected.id
-        };
-    }
-
     constructor() {
         super();
         this.requestData = this.requestData.bind(this);
@@ -52,24 +35,24 @@ export default class GridList extends React.Component {
     }
 
     requestData({ page, sort, filter }) {
-        const pageable = { ...this.props.pageable };
+        const newPageable = { ...this.props.pageable };
+        const newSort = { ...this.props.sort };
         const newFilter = { ...this.props.filter };
 
         if (page || page === 0) {
-            pageable.number = page;
-        } else {
-            pageable.number = pageable.currentPage;
+            newPageable.number = page;
         }
 
         if (sort) {
-            pageable.sort = sort;
+            newSort.field = sort.field;
+            newSort.direction = sort.direction;
         }
 
         if (filter) {
-            newFilter[filter.column] = filter.filterTerm;
+            newFilter[filter.column] = filter.filterTerm; // TODO
         }
 
-        this.props.requestData(pageable, newFilter);
+        this.props.requestData(newPageable, newSort, newFilter);
     }
 
     onSortChange(sortColumn, sortDirection) {
@@ -79,10 +62,10 @@ export default class GridList extends React.Component {
                 this.requestData({ sort: defaultSort });
                 break;
             case 'ASC':
-                this.requestData({ sort: { field: sortColumn, isAscending: true } });
+                this.requestData({ sort: { field: sortColumn, direction: 'asc' } });
                 break;
             case 'DESC':
-                this.requestData({ sort: { field: sortColumn, isAscending: false } });
+                this.requestData({ sort: { field: sortColumn, direction: 'desc' } });
                 break;
         }
     }
@@ -95,31 +78,53 @@ export default class GridList extends React.Component {
         this.requestData({ page })
     }
 
+    onCellSelected(coordinates) {
+        if (coordinates.rowIdx !== this.props.selected) {
+            this.props.onRowClick(coordinates.rowIdx);
+        }
+    }
+
+    onRowGet(index) {
+        return this.props.data[index];
+    }
+
+    static getSelectionSettings(selected) {
+        return {
+            showCheckbox: false,
+            selectBy: {
+                indexes: [selected]
+            }
+        }
+    }
+
     render() {
         const {
-            className, columns, minHeight, rowGetter, data, selected, toolbar,
-            onRowClick, pageable, isFetching, deleteModal, onFilterClear,
-            getValidFilterValues
+            className, columns, minHeight, data, selected, toolbar,
+            onRowClick, pageable, isFetching, deleteModal, onClearFilter,
+            getValidFilterValues, enableCellSelect, onRowUpdated
         } = this.props;
 
         const height = minHeight ? minHeight(this.minHeight) : this.minHeight();
-        const getter = rowGetter || GridList.rowGetter;
 
         return (
             <div className={className}>
-                <ReactDataGrid columns={columns}
+                <ReactDataGrid ref="grid"
+                               columns={columns}
                                minHeight={height}
-                               rowGetter={getter.bind(this, data, selected)}
+                               rowGetter={this.onRowGet.bind(this)}
                                rowsCount={data.length}
                                toolbar={toolbar}
                                onGridSort={this.onSortChange.bind(this)}
                                onAddFilter={this.onFilterChange.bind(this)}
                                getValidFilterValues={getValidFilterValues
                                     && getValidFilterValues.bind(this)}
-                               onClearFilters={onFilterClear && onFilterClear.bind(this)}
-                               rowSelection={GridList.settings}
-                               onRowClick={onRowClick && onRowClick.bind(this)}
-                               emptyRowsView={EmptyList} />
+                               onClearFilters={onClearFilter}
+                               rowSelection={GridList.getSelectionSettings(selected)}
+                               onRowClick={onRowClick}
+                               emptyRowsView={EmptyList}
+                               enableCellSelect={enableCellSelect}
+                               onCellSelected={this.onCellSelected.bind(this)}
+                               onRowUpdated={onRowUpdated} />
 
                 <ListPaginate setPage={this.onPageChange.bind(this)}
                               {...pageable} />
@@ -127,7 +132,7 @@ export default class GridList extends React.Component {
                 <ListSpinner isShown={isFetching} />
 
                 <DeleteModal {...deleteModal} isFetching={isFetching}
-                             data={selected} />
+                             data={this.onRowGet(selected)} />
             </div>
         )
     }
@@ -135,7 +140,7 @@ export default class GridList extends React.Component {
 
 GridList.propTypes = {
     data: React.PropTypes.array.isRequired,
-    selected: React.PropTypes.object,
+    selected: React.PropTypes.number,
     columns: React.PropTypes.arrayOf(React.PropTypes.shape({
         key: React.PropTypes.string.isRequired,
         name: React.PropTypes.string.isRequired,
@@ -150,14 +155,18 @@ GridList.propTypes = {
     resetList: React.PropTypes.func.isRequired,
     defaultSort: React.PropTypes.shape({
         field: React.PropTypes.string.isRequired,
-        isAscending: React.PropTypes.bool.isRequired
+        direction: React.PropTypes.string.isRequired
     }).isRequired,
+    sort: React.PropTypes.shape({
+        field: React.PropTypes.string.isRequired,
+        direction: React.PropTypes.string.isRequired
+    }),
     onClearFilter: React.PropTypes.func,
     getValidFilterValues: React.PropTypes.func,
     onRowClick: React.PropTypes.func,
     pageable: React.PropTypes.shape({
-        maxPage: React.PropTypes.number.isRequired,
-        currentPage: React.PropTypes.number.isRequired,
+        totalPages: React.PropTypes.number.isRequired,
+        number: React.PropTypes.number.isRequired,
         size: React.PropTypes.number
     }).isRequired,
     filter: React.PropTypes.object,
@@ -168,5 +177,11 @@ GridList.propTypes = {
         message: React.PropTypes.func.isRequired,
         onModalClose: React.PropTypes.func.isRequired,
         onModalAccept: React.PropTypes.func.isRequired
-    })
+    }),
+    enableCellSelect: React.PropTypes.bool,
+    onRowUpdated: React.PropTypes.func
+};
+
+GridList.defaultProps = {
+    enableCellSelect: false
 };
