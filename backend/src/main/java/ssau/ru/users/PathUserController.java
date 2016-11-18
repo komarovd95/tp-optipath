@@ -24,7 +24,7 @@ public class PathUserController implements ResourceProcessor<Resource<PathUser>>
         this.assembler = assembler;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/pathUsers/search/filter")
+    @RequestMapping(method = RequestMethod.GET, value = "/users/search/filter")
     @ResponseBody
     public PagedResources<Resource<PathUser>> filterUsername(PathUserCriteria criteria,
                                                              Pageable pageable) {
@@ -32,7 +32,7 @@ public class PathUserController implements ResourceProcessor<Resource<PathUser>>
                 userRepository.findAll(new PathUserSpecification(criteria), pageable));
     }
 
-    @RequestMapping("/pathUsers/user")
+    @RequestMapping("/users/user")
     @ResponseBody
     public PathUser principal(Principal user) {
         return userRepository.findByUsername(user.getName());

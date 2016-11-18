@@ -64,7 +64,7 @@ function mapStateToProps(state) {
 }
 
 const SignInContainer = reduxForm({
-    form: 'SignInForm',
+    form: 'SignUpForm',
     validate
 })(SignInForm);
 

@@ -8,12 +8,16 @@ import { Provider } from 'react-redux';
 
 import { syncHistoryWithStore } from 'react-router-redux';
 
-import configureStore from './store/configure_store';
+import configuredStore from './store/configure_store';
 
 import routes from './routes';
 
+import Perf from 'react-addons-perf';
 
-const store = configureStore();
+window.Perf = Perf;
+
+
+const store = configuredStore;
 
 const history = syncHistoryWithStore(browserHistory, store);
 

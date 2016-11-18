@@ -4,11 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.transaction.annotation.Transactional;
 import ssau.ru.cars.*;
 import ssau.ru.cars.Car;
 import ssau.ru.cars.FuelType;
 import ssau.ru.graph.*;
+import ssau.ru.users.DriveStyle;
+import ssau.ru.users.DriveStyleRepository;
 import ssau.ru.users.PathUser;
 import ssau.ru.users.PathUserRepository;
 
@@ -17,10 +20,13 @@ import java.util.List;
 import java.util.Random;
 
 @SpringBootApplication
+@EnableCaching
 public class BackendApplication implements CommandLineRunner {
     @Autowired
     public BackendApplication(PathUserRepository userRepository, PathGraphRepository graphRepository,
-                              PathNodeRepository nodeRepository, PathEdgeRepository edgeRepository, CarRepository carRepository, CarBrandRepository carBrandRepository, FuelTypeRepository fuelTypeRepository) {
+                              PathNodeRepository nodeRepository, PathEdgeRepository edgeRepository,
+                              CarRepository carRepository, CarBrandRepository carBrandRepository,
+                              FuelTypeRepository fuelTypeRepository, DriveStyleRepository driveStyleRepository) {
         this.userRepository = userRepository;
         this.graphRepository = graphRepository;
         this.nodeRepository = nodeRepository;
@@ -28,6 +34,7 @@ public class BackendApplication implements CommandLineRunner {
         this.carRepository = carRepository;
         this.carBrandRepository = carBrandRepository;
         this.fuelTypeRepository = fuelTypeRepository;
+        this.driveStyleRepository = driveStyleRepository;
     }
 
     public static void main(String[] args) {
@@ -48,10 +55,19 @@ public class BackendApplication implements CommandLineRunner {
 
     private final CarRepository carRepository;
 
+    private final DriveStyleRepository driveStyleRepository;
+
 	@Override
     @Transactional
 	public void run(String... args) throws Exception {
+        DriveStyle style1 = new DriveStyle("economy");
+        DriveStyle style2 = new DriveStyle("fire");
+
+        driveStyleRepository.save(style1);
+        driveStyleRepository.save(style2);
+
 	    PathUser user = new PathUser("diman", "diman", "ROLE_USER", "ROLE_ADMIN");
+        user.setDriveStyle(style1);
 
         PathGraph graph = new PathGraph();
         user.addPathGraph(graph);
@@ -81,7 +97,7 @@ public class BackendApplication implements CommandLineRunner {
         List<PathUser> users = new ArrayList<>();
 
         for (int i = 0; i < 50; i++) {
-            users.add(new PathUser("dima" + i, "dima"));
+            users.add(new PathUser("dima" + i, "dima", style2));
         }
 
         userRepository.save(users);

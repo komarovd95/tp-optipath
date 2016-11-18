@@ -36,6 +36,7 @@
     "react-router-redux": "^4.0.5",
     "redux-thunk": "^2.1.0",
     "reselect": "^2.5.4",
+    "normalizr": "^2.2.1",
     "shortid": "^2.2.6"
   },
   "devDependencies": {
@@ -66,6 +67,7 @@
     "path": "^0.12.7",
     "node-notifier": "^4.6.1",
     "del": "^2.2.2",
-    "proxy-middleware": "^0.15.0"
+    "proxy-middleware": "^0.15.0",
+    "react-addons-perf": "*"
   }
 }

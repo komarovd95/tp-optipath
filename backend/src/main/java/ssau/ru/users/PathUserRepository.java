@@ -8,7 +8,8 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-@RepositoryRestResource
+@RepositoryRestResource(path = "users", collectionResourceRel = "users",
+        itemResourceRel = "user")
 public interface PathUserRepository extends PagingAndSortingRepository<PathUser, Long>,
         JpaSpecificationExecutor<PathUser> {
     PathUser findByUsername(@Param("username") String username);

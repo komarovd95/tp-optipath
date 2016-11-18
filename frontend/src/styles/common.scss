@@ -129,7 +129,18 @@ body {
   z-index: 10001;
   bottom: 60px !important;
   font-size: 12px !important;
-  background: #d9534f !important;
+
+  &.info {
+    background: #5cb85c !important;
+  }
+
+  &.warn {
+    background: #f0ad4e !important;
+  }
+
+  &.error {
+    background: #d9534f !important;
+  }
 
   .notification-bar-action {
     color: black !important;
@@ -138,4 +149,23 @@ body {
 
 .notification-top {
   z-index: 10001;
+}
+
+.pagination {
+  li {
+    cursor: pointer !important;
+  }
+}
+
+.table-user-profile {
+  tr {
+    td {
+      border-top: none !important;
+
+      &:first-child {
+        font-weight: 600;
+        text-align: right;
+      }
+    }
+  }
 }

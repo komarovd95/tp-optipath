@@ -10,12 +10,18 @@ import DeleteModal from '../common/DeleteModal';
 export default class GridList extends React.Component {
     constructor() {
         super();
+
+        this.state = {
+            selectedIndex: -1
+        };
+
+        this.onRowGet = this.onRowGet.bind(this);
         this.minHeight = this.minHeight.bind(this);
+        this.onRowSelect = this.onRowSelect.bind(this);
         this.requestData = this.requestData.bind(this);
         this.onSortChange = this.onSortChange.bind(this);
-        this.onFilterChange = this.onFilterChange.bind(this);
         this.onPageChange = this.onPageChange.bind(this);
-        this.onRowGet = this.onRowGet.bind(this);
+        this.onFilterChange = this.onFilterChange.bind(this);
         this.onCellSelected = this.onCellSelected.bind(this);
         this.getSelectionSettings = this.getSelectionSettings.bind(this);
     }
@@ -85,21 +91,42 @@ export default class GridList extends React.Component {
         this.requestData({ page })
     }
 
+    onRowSelect(index) {
+        const selectedIndex = this.state.selectedIndex;
+
+        if (selectedIndex === index) {
+            this.setState({
+                selectedIndex: -1
+            });
+
+            this.props.onRowSelected(-1);
+        } else {
+            this.setState({
+                selectedIndex: index
+            });
+
+            this.props.onRowSelected(index);
+        }
+    }
+
     onCellSelected(coordinates) {
-        if (coordinates.rowIdx !== this.props.selected) {
-            this.props.onRowClick(coordinates.rowIdx);
+        if (coordinates.rowIdx !== this.state.selectedIndex) {
+            this.onRowSelect(coordinates.rowIdx);
         }
     }
 
     onRowGet(index) {
-        return this.props.data[index];
+        console.log(index);
+        const { entities, result } = this.props.data;
+        console.log(entities, result);
+        return entities[result[index]];
     }
 
     getSelectionSettings() {
         return {
             showCheckbox: false,
             selectBy: {
-                indexes: [this.props.selected]
+                indexes: this.state.selectedIndex < 0 ? [] : [this.state.selectedIndex]
             }
         }
     }
@@ -108,9 +135,10 @@ export default class GridList extends React.Component {
         const {
             className, columns, data, toolbar, selected, pageable, isFetching,
             deleteModal, enableCellSelect,
-            minHeight, getValidFilterValues, onClearFilters,
-            onRowSelected, onRowUpdated
+            minHeight, getValidFilterValues, onClearFilters, onRowUpdated
         } = this.props;
+
+        console.log('props', this.props);
 
         const height = minHeight ? minHeight(this.minHeight) : this.minHeight();
         const selectionSettings = this.getSelectionSettings();
@@ -119,27 +147,28 @@ export default class GridList extends React.Component {
             <div className={className}>
                 <ReactDataGrid ref="grid"
                                columns={columns}
-                               minHeight={height}
                                rowGetter={this.onRowGet}
-                               rowsCount={data.length}
-                               toolbar={toolbar}
-                               onGridSort={this.onSortChange}
-                               onAddFilter={this.onFilterChange}
-                               getValidFilterValues={getValidFilterValues}
-                               onClearFilters={onClearFilters}
-                               rowSelection={selectionSettings}
-                               onRowClick={onRowSelected}
-                               emptyRowsView={EmptyList}
-                               enableCellSelect={enableCellSelect}
-                               onCellSelected={this.onCellSelected}
-                               onRowUpdated={onRowUpdated} />
+                               rowsCount={data.result.length}
+                               minHeight={height}
+                               //toolbar={toolbar}
+                               //onGridSort={this.onSortChange}
+                               //onAddFilter={this.onFilterChange}
+                               //getValidFilterValues={getValidFilterValues}
+                               //onClearFilters={onClearFilters}
+                               //rowSelection={selectionSettings}
+                               //onRowClick={this.onRowSelect}
+                               //emptyRowsView={EmptyList}
+                               //enableCellSelect={enableCellSelect}
+                               //onCellSelected={this.onCellSelected}
+                               //onRowUpdated={onRowUpdated}
+                />
 
-                <ListPaginate setPage={this.onPageChange} {...pageable} />
+                {/*<ListPaginate setPage={this.onPageChange} {...pageable} />*/}
 
-                <ListSpinner isShown={isFetching} />
+                {/*<ListSpinner isShown={isFetching} />*/}
 
-                <DeleteModal {...deleteModal} isFetching={isFetching}
-                             data={this.onRowGet(selected)} />
+                {/*<DeleteModal {...deleteModal} isFetching={isFetching}*/}
+                             {/*data={this.onRowGet(selected)} />*/}
             </div>
         )
     }

@@ -21,6 +21,7 @@ export class CallApi {
 
     static fetchList(urlString, pageable, sort, filter, filterInclude = false) {
         const requestData = {};
+        console.log(pageable, sort, filter);
 
         if (pageable) {
             requestData.page = pageable.number;

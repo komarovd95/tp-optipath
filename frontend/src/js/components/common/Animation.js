@@ -1,7 +1,7 @@
 import React from "react";
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
-export default class Animation extends React.Component {
+export default class Animation extends React.PureComponent {
     render() {
         const timeout = this.props.timeout || 300;
 

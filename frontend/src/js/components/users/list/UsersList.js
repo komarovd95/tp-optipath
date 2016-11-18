@@ -1,4 +1,5 @@
 import React from 'react';
+import { createSelector } from 'reselect';
 
 import GridList from '../../list/GridList';
 import UserLink from './UserLink';
@@ -38,7 +39,11 @@ export default class UsersList extends React.Component {
         )
     }
 
-    onRowSelect(rowIndex) {
+    getUsers = (state) => state.users;
+    getSelectedIndex = (state) => state.selectedIndex;
+
+
+    onRowSelected(rowIndex) {
         if (rowIndex === this.props.selectedIndex) {
             this.props.selectRow(-1);
         } else {
@@ -76,6 +81,7 @@ export default class UsersList extends React.Component {
                           onModalAccept: modalAccept,
                           onModalClose: modalClose
                       }}
+                      onRowSelected={this.onRowSelected}
                       onRowClick={this.onRowSelect.bind(this)} />
         )
     }

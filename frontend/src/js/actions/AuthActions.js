@@ -29,7 +29,7 @@ function signInFailure(error) {
 
 function principalRequest() {
     return () => {
-        return CallApi.get('api/pathUsers/user');
+        return CallApi.get('api/users/user');
     }
 }
 
@@ -118,7 +118,7 @@ export function signUp({ username, password }) {
             }
         };
 
-        return CallApi.post('/api/pathUsers',
+        return CallApi.post('/api/users',
             JSON.stringify({ username, password }), config)
             .then(response => {
                 const { status } = response;
@@ -165,7 +165,7 @@ export function checkUsername(username) {
     return (dispatch) => {
         dispatch(checkUsernameRequest());
 
-        return CallApi.get(`/api/pathUsers/search/findByUsernameExists?username=${username}`)
+        return CallApi.get(`/api/users/search/findByUsernameExists?username=${username}`)
             .then(response => {
                 const status = response.status;
 

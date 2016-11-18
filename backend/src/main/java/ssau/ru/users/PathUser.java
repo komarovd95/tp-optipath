@@ -38,12 +38,22 @@ public class PathUser extends DomainObject<Long> {
     @JsonIgnore
     private List<PathGraph> pathGraphs;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_drive_style")
+    @JsonIgnore
+    private DriveStyle driveStyle;
+
     //private List<Route> routes;
 
     //private List<Car> cars;
 
     private PathUser() {
         pathGraphs = new ArrayList<>();
+    }
+
+    public PathUser(String username, String password, DriveStyle driveStyle) {
+        this(username, password, "ROLE_USER");
+        this.driveStyle = driveStyle;
     }
 
     public PathUser(String username, String password, String... roles) {
@@ -86,9 +96,8 @@ public class PathUser extends DomainObject<Long> {
         return roles;
     }
 
-    @JsonIgnore
     public void setRoles(String[] roles) {
-        this.roles = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(roles)));
+        this.roles = new HashSet<>(Arrays.asList(roles));
     }
 
     public List<PathGraph> getPathGraphs() {
@@ -97,5 +106,18 @@ public class PathUser extends DomainObject<Long> {
 
     public void addPathGraph(PathGraph graph) {
         this.pathGraphs.add(Objects.requireNonNull(graph));
+    }
+
+    public DriveStyle getDriveStyle() {
+        return driveStyle;
+    }
+
+    public void setDriveStyle(DriveStyle driveStyle) {
+        this.driveStyle = driveStyle;
+    }
+
+    @JsonProperty("driveStyleName")
+    public String getDriveStyleName() {
+        return driveStyle.getName();
     }
 }

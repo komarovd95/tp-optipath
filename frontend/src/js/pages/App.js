@@ -1,19 +1,22 @@
 import React from 'react';
 
-import Navigation from '../containers/NavContainer';
-import Notification from '../containers/ErrorContainer';
 import Animation from '../components/common/Animation';
+
+import ModalContainer from '../modal';
+import NotificationContainer from '../notifications';
+import NavigationContainer from '../navigation';
 
 export default class AppPage extends React.Component {
     render() {
-        const { pathname } = this.props.location;
+        const {pathname} = this.props.location;
 
         return (
             <div style={{ height: '100%' }}>
-                <Navigation/>
-                <Notification/>
+                <NavigationContainer/>
+                <NotificationContainer/>
+                <ModalContainer/>
                 <Animation>
-                    {React.cloneElement(this.props.children, { key: pathname })}
+                    {React.cloneElement(this.props.children, {key: pathname})}
                 </Animation>
                 <footer className="footer navbar-fixed-bottom">
                     <div className="container-fluid">
