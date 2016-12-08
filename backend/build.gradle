@@ -26,6 +26,9 @@ repositories {
     mavenCentral()
 }
 
+springBoot {
+    mainClass = "ssau.ru.BackendApplication"
+}
 
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-data-jpa')

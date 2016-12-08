@@ -11,7 +11,6 @@ import ssau.ru.cars.Car;
 import ssau.ru.cars.FuelType;
 import ssau.ru.graph.*;
 import ssau.ru.users.DriveStyle;
-import ssau.ru.users.DriveStyleRepository;
 import ssau.ru.users.PathUser;
 import ssau.ru.users.PathUserRepository;
 
@@ -26,7 +25,7 @@ public class BackendApplication implements CommandLineRunner {
     public BackendApplication(PathUserRepository userRepository, PathGraphRepository graphRepository,
                               PathNodeRepository nodeRepository, PathEdgeRepository edgeRepository,
                               CarRepository carRepository, CarBrandRepository carBrandRepository,
-                              FuelTypeRepository fuelTypeRepository, DriveStyleRepository driveStyleRepository) {
+                              FuelTypeRepository fuelTypeRepository) {
         this.userRepository = userRepository;
         this.graphRepository = graphRepository;
         this.nodeRepository = nodeRepository;
@@ -34,7 +33,7 @@ public class BackendApplication implements CommandLineRunner {
         this.carRepository = carRepository;
         this.carBrandRepository = carBrandRepository;
         this.fuelTypeRepository = fuelTypeRepository;
-        this.driveStyleRepository = driveStyleRepository;
+//        this.pathStreetRepository = pathStreetRepository;
     }
 
     public static void main(String[] args) {
@@ -55,31 +54,35 @@ public class BackendApplication implements CommandLineRunner {
 
     private final CarRepository carRepository;
 
-    private final DriveStyleRepository driveStyleRepository;
+//    private final PathStreetRepository pathStreetRepository;
+
+
 
 	@Override
     @Transactional
 	public void run(String... args) throws Exception {
-        DriveStyle style1 = new DriveStyle("economy");
-        DriveStyle style2 = new DriveStyle("fire");
+	    PathUser user = new PathUser();
+        user.setUsername("diman");
+        user.setPassword("diman");
+        user.setRoles(new String[] {"ROLE_ADMIN", "ROLE_USER"});
+        user.setDriveStyle(DriveStyle.LAW_ABIDING);
 
-        driveStyleRepository.save(style1);
-        driveStyleRepository.save(style2);
+        userRepository.save(user);
 
-	    PathUser user = new PathUser("diman", "diman", "ROLE_USER", "ROLE_ADMIN");
-        user.setDriveStyle(style1);
-
-        PathGraph graph = new PathGraph();
-        user.addPathGraph(graph);
+        PathGraph graph = new PathGraph("graph1");
         graph.setOwner(user);
 
-        PathNode node = new PathNode(graph, new PathNode.PathLight(15, 20), new PathNode.NodePosition(0, 10));
+        PathNode node = new PathNode(graph, new PathNode.PathLight(15, 20), new PathNode.NodePosition(100, 10));
         graph.addNode(node);
         node.setGraph(graph);
 
         PathNode node1 = new PathNode(graph, new PathNode.PathLight(15, 15), new PathNode.NodePosition(100, 100));
         graph.addNode(node1);
         node1.setGraph(graph);
+
+        PathNode node2 = new PathNode(graph, null, new PathNode.NodePosition(100, 150));
+        graph.addNode(node2);
+        node2.setGraph(graph);
 
         PathEdge edge = new PathEdge(graph, node, node1);
         edge.setCoverType(CoverType.BREAKSTONE);
@@ -88,19 +91,28 @@ public class BackendApplication implements CommandLineRunner {
         graph.addEdge(edge);
         edge.setGraph(graph);
 
+        PathEdge edge1 = new PathEdge(graph, node1, node2);
+        edge1.setCoverType(CoverType.BREAKSTONE);
+        edge1.setLength(100);
+        edge1.setDirected(true);
+        edge1.setLanes(4);
+        graph.addEdge(edge1);
+        edge1.setGraph(graph);
+
         userRepository.save(user);
         graphRepository.save(graph);
         nodeRepository.save(node);
         nodeRepository.save(node1);
         edgeRepository.save(edge);
+        edgeRepository.save(edge1);
 
-        List<PathUser> users = new ArrayList<>();
-
-        for (int i = 0; i < 50; i++) {
-            users.add(new PathUser("dima" + i, "dima", style2));
-        }
-
-        userRepository.save(users);
+//        List<PathUser> users = new ArrayList<>();
+//
+//        for (int i = 0; i < 50; i++) {
+//            users.add(new PathUser("dima" + i, "dima", style2));
+//        }
+//
+//        userRepository.save(users);
 
         for (PathUser u : userRepository.findAll()) {
             System.out.println(u.getUsername() + " : " + u.getPathGraphs());
@@ -108,10 +120,21 @@ public class BackendApplication implements CommandLineRunner {
 
         CarBrand brand = new CarBrand("BMP");
         ssau.ru.cars.FuelType fuelType = new FuelType("GAS", 10.0);
-        //Car car = new Car(brand, "X56", 180, fuelType, 10.0);
+        Car car = new Car();
+        car.setName("X6");
+        car.setBrand(brand);
+        car.setFuelType(fuelType);
+        car.setMaxVelocity(222);
+        car.setFuelConsumption(15.0);
 
         carBrandRepository.save(brand);
         fuelTypeRepository.save(fuelType);
-        //carRepository.save(car);
+        carRepository.save(car);
+
+//        PathStreet street1 = new PathStreet();
+//        street1.setName("Ленина");
+//        street1.setType(PathStreet.StreetType.STREET);
+//
+//        pathStreetRepository.save(street1);
     }
 }

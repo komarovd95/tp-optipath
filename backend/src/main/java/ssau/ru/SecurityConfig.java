@@ -7,6 +7,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.csrf.CsrfToken;
@@ -43,15 +44,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .headers().frameOptions().sameOrigin().and()
-                .formLogin().loginPage("/signin").failureHandler(loginFailure()).and()
-                .logout().logoutRequestMatcher(new AntPathRequestMatcher("/signout"))
-                    .logoutSuccessHandler(logoutHandler()).permitAll().and()
+                //.addFilterBefore(new CORSFilter(), ChannelProcessingFilter.class)
+                .httpBasic().and()
+                .logout()
+                    .logoutRequestMatcher(new AntPathRequestMatcher("/signout"))
+                    .permitAll().and()
                 .authorizeRequests()
                     .antMatchers(PATHS).permitAll()
-                    .antMatchers(HttpMethod.POST, "/api/pathUsers").permitAll()
+                    .antMatchers("/api/users/user").authenticated()
+                    .antMatchers(HttpMethod.POST, "/api/users").permitAll()
                     .antMatchers(HttpMethod.GET,
-                            "/api/pathUsers/search/findByUsernameExists").permitAll()
+                            "/api/users/search/findByUsernameExists").permitAll()
                     .antMatchers(HttpMethod.GET, "/api/pathUsers").hasRole("ADMIN")
                 .anyRequest().authenticated().and()
                 .csrf().disable();

@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.resource.ResourceResolver;
@@ -23,6 +24,16 @@ public class SinglePageAppConfig extends WebMvcConfigurerAdapter {
                 .addResourceLocations("classpath:/static/")
                 .resourceChain(false)
                 .addResolver(new PushStateResourceResolver());
+    }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("*")
+                .allowedMethods("POST", "GET", "OPTIONS", "DELETE")
+                .allowedHeaders("Content-Type", "Accept", "X-Requested-With")
+                .allowCredentials(true)
+                .maxAge(3600);
     }
 
     private class PushStateResourceResolver implements ResourceResolver {

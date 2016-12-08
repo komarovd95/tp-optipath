@@ -4,24 +4,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.PagedResources;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.ResourceProcessor;
+import org.springframework.hateoas.*;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 @RepositoryRestController
 public class PathUserController implements ResourceProcessor<Resource<PathUser>> {
     private final PathUserRepository userRepository;
     private final PagedResourcesAssembler<PathUser> assembler;
+    private final EntityLinks entityLinks;
 
     @Autowired
     public PathUserController(PathUserRepository userRepository,
-                              PagedResourcesAssembler<PathUser> assembler) {
+                              PagedResourcesAssembler<PathUser> assembler,
+                              EntityLinks entityLinks) {
         this.userRepository = userRepository;
         this.assembler = assembler;
+        this.entityLinks = entityLinks;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/users/search/filter")
@@ -34,8 +38,12 @@ public class PathUserController implements ResourceProcessor<Resource<PathUser>>
 
     @RequestMapping("/users/user")
     @ResponseBody
-    public PathUser principal(Principal user) {
-        return userRepository.findByUsername(user.getName());
+    public Resource<PathUser> principal(Principal user) {
+        PathUser pathUser = userRepository.findByUsername(user.getName());
+
+        return new Resource<>(pathUser, Collections.singletonList(
+                entityLinks.linkToSingleResource(PathUser.class, pathUser.getId())
+                        .withSelfRel()));
     }
 
     @Override

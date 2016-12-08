@@ -1,11 +1,12 @@
 package ssau.ru.graph;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.data.rest.core.config.Projection;
 import ssau.ru.DomainObject;
 import ssau.ru.users.PathUser;
 
 import javax.persistence.*;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.*;
@@ -18,23 +19,23 @@ public class PathGraph extends DomainObject<Long> {
     @GeneratedValue
     private Long id;
 
-    @Column(name = "graph_name", length = 50)
-    @Size(min = 1, max = 50)
+    @Column(name = "graph_name", length = 50, nullable = false)
+    @Size(min = 1, max = 50) @NotNull
     @Pattern(regexp = "^[\\p{L}\\d\\s]+$")
     private String name;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "graph_owner")
-    @JsonIgnore
+//    @JsonIgnore
     private PathUser owner;
 
     @OneToMany(mappedBy = "graph", cascade = CascadeType.ALL)
-    @Size(min = 2)
+//    @Size(min = 2)
     @Valid
     private List<PathNode> nodes;
 
     @OneToMany(mappedBy = "graph", cascade = CascadeType.ALL)
-    @Size(min = 1)
+//    @Size(min = 1)
     @Valid
     private List<PathEdge> edges;
 
@@ -43,12 +44,17 @@ public class PathGraph extends DomainObject<Long> {
         edges = new ArrayList<>();
     }
 
+    public PathGraph(String name) {
+        this();
+        this.name = name;
+    }
+
     public Long getId() {
         return id;
     }
 
     public String getName() {
-        return name == null ? "graph" + id : name;
+        return name;
     }
 
     public void setName(String name) {
@@ -85,5 +91,13 @@ public class PathGraph extends DomainObject<Long> {
 
     public void addEdge(PathEdge edge) {
         edges.add(Objects.requireNonNull(edge));
+    }
+
+    @Projection(name = "preview", types = PathGraph.class)
+    public interface PreviewProjection {
+        Long getId();
+        String getName();
+        Date getCreatedAt();
+        Date getUpdatedAt();
     }
 }

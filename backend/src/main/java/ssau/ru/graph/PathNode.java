@@ -15,8 +15,7 @@ public class PathNode implements Serializable {
     @Id @GeneratedValue
     private Long id;
 
-    @Embedded
-    @NotNull @Valid
+    @Embedded @Valid
     private PathLight light;
 
     @Embedded

@@ -1,8 +1,7 @@
 package ssau.ru.users;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ssau.ru.DomainObject;
@@ -27,7 +26,7 @@ public class PathUser extends DomainObject<Long> {
     private String username;
 
     @Column(name = "user_pass", nullable = false)
-    @NotNull @JsonIgnore
+    @NotNull
     private String password;
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -35,38 +34,14 @@ public class PathUser extends DomainObject<Long> {
     private Set<String> roles;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
-    @JsonIgnore
     private List<PathGraph> pathGraphs;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "user_drive_style")
-    @JsonIgnore
+    @Enumerated(EnumType.STRING)
     private DriveStyle driveStyle;
 
-    //private List<Route> routes;
-
-    //private List<Car> cars;
-
-    private PathUser() {
-        pathGraphs = new ArrayList<>();
-    }
-
-    public PathUser(String username, String password, DriveStyle driveStyle) {
-        this(username, password, "ROLE_USER");
-        this.driveStyle = driveStyle;
-    }
-
-    public PathUser(String username, String password, String... roles) {
-        this();
-        this.username = username;
-        this.setPassword(Objects.requireNonNull(password));
-        this.setRoles(Objects.requireNonNull(roles));
-    }
-
-    @JsonCreator
-    public PathUser(@JsonProperty("username") String username,
-                    @JsonProperty("password") String password) {
-        this(username, password, "ROLE_USER");
+    public PathUser() {
+        this.setRoles(new String[] {"ROLE_USER"});
+        this.driveStyle = DriveStyle.LAW_ABIDING;
     }
 
     public Long getId() {
@@ -86,12 +61,11 @@ public class PathUser extends DomainObject<Long> {
         return password;
     }
 
-    @JsonProperty("password")
+    @JsonSetter("password")
     public void setPassword(CharSequence password) {
         this.password = PASSWORD_ENCODER.encode(password);
     }
 
-    @JsonProperty("roles")
     public Set<String> getRoles() {
         return roles;
     }
@@ -101,11 +75,11 @@ public class PathUser extends DomainObject<Long> {
     }
 
     public List<PathGraph> getPathGraphs() {
-        return Collections.unmodifiableList(pathGraphs);
+        return pathGraphs;
     }
 
-    public void addPathGraph(PathGraph graph) {
-        this.pathGraphs.add(Objects.requireNonNull(graph));
+    public void setPathGraphs(List<PathGraph> graphs) {
+        this.pathGraphs = graphs;
     }
 
     public DriveStyle getDriveStyle() {
@@ -114,10 +88,5 @@ public class PathUser extends DomainObject<Long> {
 
     public void setDriveStyle(DriveStyle driveStyle) {
         this.driveStyle = driveStyle;
-    }
-
-    @JsonProperty("driveStyleName")
-    public String getDriveStyleName() {
-        return driveStyle.getName();
     }
 }
