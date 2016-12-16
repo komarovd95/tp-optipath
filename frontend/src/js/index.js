@@ -12,10 +12,13 @@ import configuredStore from './store/configure_store';
 
 import routes from './routes';
 
+import Raven from 'raven-js';
+
 import Perf from 'react-addons-perf';
 
 window.Perf = Perf;
 
+Raven.config('https://026cc57683704de08f419455ae1c98fd@sentry.io/115735').install();
 
 const store = configuredStore;
 

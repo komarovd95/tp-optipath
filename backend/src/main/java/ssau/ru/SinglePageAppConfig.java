@@ -38,7 +38,8 @@ public class SinglePageAppConfig extends WebMvcConfigurerAdapter {
 
     private class PushStateResourceResolver implements ResourceResolver {
         private Resource index = new ClassPathResource("/static/index.html");
-        private List<String> handledExtensions = Arrays.asList("html", "js", "json", "csv", "css", "png", "svg", "eot",
+        private List<String> handledExtensions = Arrays.asList("html", "js",
+                "json", "csv", "css", "png", "svg", "eot",
                 "ttf", "woff", "woff2", "appcache", "jpg", "jpeg", "gif", "ico");
         private List<String> ignoredPaths = Arrays.asList("api");
 

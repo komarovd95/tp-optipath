@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.*;
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "EDGES")
@@ -34,17 +33,18 @@ public class PathEdge {
     @Min(1) @Max(10)
     private int lanes;
 
-    @Column(name = "edge_cover")
-    @Enumerated(EnumType.STRING)
-    @NotNull
+    @Column(name = "edge_limit")
+    @Min(1) @Max(120)
+    private int limit;
+
+    @ManyToOne
     private CoverType coverType;
+
+    @ManyToOne
+    private Street street;
 
     @Column(name = "edge_directed")
     private boolean directed;
-
-    //private RoadSign sign;
-
-    //private String streetName;
 
     public PathEdge() {}
 
@@ -106,6 +106,22 @@ public class PathEdge {
 
     public void setCoverType(CoverType coverType) {
         this.coverType = coverType;
+    }
+
+    public Street getStreet() {
+        return street;
+    }
+
+    public void setStreet(Street street) {
+        this.street = street;
+    }
+
+    public int getLimit() {
+        return limit;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
     }
 
     public boolean isDirected() {

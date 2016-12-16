@@ -14,10 +14,6 @@ import ssau.ru.users.DriveStyle;
 import ssau.ru.users.PathUser;
 import ssau.ru.users.PathUserRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 @SpringBootApplication
 @EnableCaching
 public class BackendApplication implements CommandLineRunner {
@@ -25,7 +21,7 @@ public class BackendApplication implements CommandLineRunner {
     public BackendApplication(PathUserRepository userRepository, PathGraphRepository graphRepository,
                               PathNodeRepository nodeRepository, PathEdgeRepository edgeRepository,
                               CarRepository carRepository, CarBrandRepository carBrandRepository,
-                              FuelTypeRepository fuelTypeRepository) {
+                              FuelTypeRepository fuelTypeRepository, CoverTypeRepository coverTypeRepository, StreetRepository streetRepository) {
         this.userRepository = userRepository;
         this.graphRepository = graphRepository;
         this.nodeRepository = nodeRepository;
@@ -34,6 +30,8 @@ public class BackendApplication implements CommandLineRunner {
         this.carBrandRepository = carBrandRepository;
         this.fuelTypeRepository = fuelTypeRepository;
 //        this.pathStreetRepository = pathStreetRepository;
+        this.coverTypeRepository = coverTypeRepository;
+        this.streetRepository = streetRepository;
     }
 
     public static void main(String[] args) {
@@ -53,6 +51,10 @@ public class BackendApplication implements CommandLineRunner {
     private final FuelTypeRepository fuelTypeRepository;
 
     private final CarRepository carRepository;
+
+    private final CoverTypeRepository coverTypeRepository;
+
+    private final StreetRepository streetRepository;
 
 //    private final PathStreetRepository pathStreetRepository;
 
@@ -84,15 +86,30 @@ public class BackendApplication implements CommandLineRunner {
         graph.addNode(node2);
         node2.setGraph(graph);
 
+        CoverType coverType = new CoverType();
+        coverType.setCoverTypeName("Breakstone");
+        coverType.setSlowdown(0.87);
+
+        CoverType cT = new CoverType();
+        cT.setCoverTypeName("Asphalt");
+        cT.setSlowdown(0.56);
+
+        Street street = new Street();
+        street.setStreetType("улица");
+        street.setStreetName("Ленина");
+
         PathEdge edge = new PathEdge(graph, node, node1);
-        edge.setCoverType(CoverType.BREAKSTONE);
+        edge.setCoverType(coverType);
+        edge.setLimit(60);
         edge.setLength(100);
+        edge.setStreet(street);
         edge.setLanes(3);
         graph.addEdge(edge);
         edge.setGraph(graph);
 
         PathEdge edge1 = new PathEdge(graph, node1, node2);
-        edge1.setCoverType(CoverType.BREAKSTONE);
+        edge1.setCoverType(coverType);
+        edge1.setLimit(110);
         edge1.setLength(100);
         edge1.setDirected(true);
         edge1.setLanes(4);
@@ -100,6 +117,9 @@ public class BackendApplication implements CommandLineRunner {
         edge1.setGraph(graph);
 
         userRepository.save(user);
+        coverTypeRepository.save(coverType);
+        coverTypeRepository.save(cT);
+        streetRepository.save(street);
         graphRepository.save(graph);
         nodeRepository.save(node);
         nodeRepository.save(node1);
@@ -118,7 +138,7 @@ public class BackendApplication implements CommandLineRunner {
             System.out.println(u.getUsername() + " : " + u.getPathGraphs());
         }
 
-        CarBrand brand = new CarBrand("BMP");
+        CarBrand brand = new CarBrand("BMP1");
         ssau.ru.cars.FuelType fuelType = new FuelType("GAS", 10.0);
         Car car = new Car();
         car.setName("X6");
@@ -129,7 +149,10 @@ public class BackendApplication implements CommandLineRunner {
 
         carBrandRepository.save(brand);
         fuelTypeRepository.save(fuelType);
+        //user.setOwnCars(Collections.singletonList(car));
         carRepository.save(car);
+
+       // car.setOwners(Collections.singletonList(user));
 
 //        PathStreet street1 = new PathStreet();
 //        street1.setName("Ленина");

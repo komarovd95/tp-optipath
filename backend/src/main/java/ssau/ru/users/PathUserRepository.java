@@ -18,6 +18,8 @@ public interface PathUserRepository extends PagingAndSortingRepository<PathUser,
             "FROM PathUser u WHERE u.username = ?1")
     Boolean findByUsernameExists(@Param("username") String username);
 
+    Long countPathGraphsById(@Param("id") Long id);
+
     Page<PathUser> findAllByUsernameContaining(@Param("username") String username,
                                                Pageable pageable);
 }

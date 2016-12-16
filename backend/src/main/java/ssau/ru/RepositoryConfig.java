@@ -22,7 +22,9 @@ public class RepositoryConfig extends RepositoryRestConfigurerAdapter {
     @Override
     public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
         config.exposeIdsFor(PathNode.class, PathEdge.class, PathGraph.class, PathUser.class,
-                Car.class, CarBrand.class, DriveStyle.class);
+                Car.class, CarBrand.class, FuelType.class, CoverType.class, Street.class,
+                DriveStyle.class
+        );
     }
 
     @Override
@@ -30,6 +32,5 @@ public class RepositoryConfig extends RepositoryRestConfigurerAdapter {
         Validator validator = validator();
 
         listener.addValidator("beforeSave", validator);
-//        listener.addValidator("beforeCreate", validator);
     }
 }

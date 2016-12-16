@@ -1,37 +1,42 @@
 package ssau.ru.graph;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import ssau.ru.DomainObject;
 
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum CoverType {
-    SAND(0.3, "Песок"),
-    SOIL(0.5, "Грунт"),
-    BREAKSTONE(0.6, "Щебень"),
-    GRAVEL(0.8, "Гравий"),
-    CONCRETE(1.0, "Бетон"),
-    ASPHALT(1.0, "Асфальт");
+import javax.persistence.*;
+import javax.validation.constraints.*;
 
-    private final double slowdownCoefficient;
-    private final String representName;
+@Entity
+@Table(name = "COVER_TYPES")
+public class CoverType extends DomainObject<Long> {
+    @Id @GeneratedValue
+    private Long id;
 
-    CoverType(double slowdownCoefficient, String representName) {
-        this.slowdownCoefficient = slowdownCoefficient;
-        this.representName = representName;
-    }
+    @Column(name = "cover_type_name", nullable = false, unique = true, length = 50)
+    @NotNull @Size(min = 1, max = 50) @Pattern(regexp = "^[\\p{L}\\d\\s]+$")
+    private String coverTypeName;
 
-    @JsonProperty("slowdown")
-    public double getSlowdownCoefficient() {
-        return slowdownCoefficient;
-    }
-
-    @JsonProperty("name")
-    public String getRepresentName() {
-        return representName;
-    }
+    @Column(name = "cover_type_slowdown", nullable = false)
+    @NotNull @Min(0) @Max(1)
+    private Double slowdown;
 
     @Override
-    public String toString() {
-        return representName;
+    public Long getId() {
+        return id;
+    }
+
+    public String getCoverTypeName() {
+        return coverTypeName;
+    }
+
+    public void setCoverTypeName(String coverTypeName) {
+        this.coverTypeName = coverTypeName;
+    }
+
+    public Double getSlowdown() {
+        return slowdown;
+    }
+
+    public void setSlowdown(Double slowdown) {
+        this.slowdown = slowdown;
     }
 }

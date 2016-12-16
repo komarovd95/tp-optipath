@@ -1,11 +1,15 @@
 package ssau.ru.cars;
 
+import ssau.ru.users.PathUser;
+
 class CarCriteria {
     private String name;
-    private String brand;
-    private String fuelType;
+    private String[] brand;
+    private String[] fuelType;
     private String fuelConsumption;
     private String maxVelocity;
+    private Long ownerId;
+    private boolean onlyMine;
 
     public String getName() {
         return name;
@@ -15,19 +19,19 @@ class CarCriteria {
         this.name = name;
     }
 
-    public String getBrand() {
+    public String[] getBrand() {
         return brand;
     }
 
-    public void setBrand(String brand) {
+    public void setBrand(String[] brand) {
         this.brand = brand;
     }
 
-    public String getFuelType() {
+    public String[] getFuelType() {
         return fuelType;
     }
 
-    public void setFuelType(String fuelType) {
+    public void setFuelType(String[] fuelType) {
         this.fuelType = fuelType;
     }
 
@@ -45,5 +49,21 @@ class CarCriteria {
 
     public void setMaxVelocity(String maxVelocity) {
         this.maxVelocity = maxVelocity;
+    }
+
+    public Long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
+    }
+
+    public boolean getOnlyMine() {
+        return onlyMine;
+    }
+
+    public void setOnlyMine(boolean onlyMine) {
+        this.onlyMine = onlyMine;
     }
 }

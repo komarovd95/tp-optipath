@@ -2,13 +2,12 @@ package ssau.ru.cars;
 
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
-import ssau.ru.utils.NumberCriteria;
+import ssau.ru.users.PathUser;
+import ssau.ru.utils.InCriteria;
+import ssau.ru.utils.RangeCriteria;
 import ssau.ru.utils.StringCriteria;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,23 +27,29 @@ class CarSpecification implements Specification<Car> {
                 .toLikeSpecification());
 
         if (criteria.getBrand() != null) {
-            specifications.add(new StringCriteria(root.get("brand").get("brandName"),
-                    criteria.getBrand()).toEqualsSpecification());
+            specifications.add(new InCriteria(root.get("brand").get("brandName"),
+                    criteria.getBrand()).toSpecification());
         }
 
         if (criteria.getFuelType() != null) {
-            specifications.add(new StringCriteria(root.get("fuelType").get("fuelTypeName"),
-                    criteria.getFuelType()).toEqualsSpecification());
+            specifications.add(new InCriteria(root.get("fuelType").get("fuelTypeName"),
+                    criteria.getFuelType()).toSpecification());
         }
 
         if (criteria.getFuelConsumption() != null) {
-            specifications.add(NumberCriteria.fromString(
-                    criteria.getFuelConsumption(), root.get("fuelConsumption")));
+            specifications.add(new RangeCriteria(root.get("fuelConsumption"),
+                    criteria.getFuelConsumption()).toSpecification());
         }
 
         if (criteria.getMaxVelocity() != null) {
-            specifications.add(NumberCriteria.fromString(
-                    criteria.getMaxVelocity(), root.get("maxVelocity")));
+            specifications.add(new RangeCriteria(root.get("maxVelocity"),
+                    criteria.getMaxVelocity()).toSpecification());
+        }
+
+        if (criteria.getOnlyMine() && criteria.getOwnerId() != null) {
+            specifications.add((root1, query1, cb1) ->
+                    cb1.equal(root.join("owners").get("id"),
+                            criteria.getOwnerId()));
         }
 
         Specification<Car> result = specifications.get(0);

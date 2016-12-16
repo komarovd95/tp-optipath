@@ -1,4 +1,5 @@
-import {Schema} from 'normalizr';
+import {Schema, arrayOf, normalize} from 'normalizr';
+import mapValues from 'lodash/mapValues';
 import {ADMIN, USER} from './constants';
 
 export class PathUser {
@@ -25,4 +26,19 @@ export const rolesToString = (roles) => roles.includes('ROLE_ADMIN') ? ADMIN : U
 
 export const driveStyleToString = (driveStyle) => driveStyle === 'economy'
     ? 'Законопослушный' : 'Нарушитель';
+
+
+export const getUsersFromResponseData = (data) => {
+    const users = data['_embedded'] ? data['_embedded'] : {};
+
+    const normalized = normalize(users, {
+        users: arrayOf(usersSchema)
+    });
+
+    const entities = mapValues(normalized.entities.users, u => new PathUser(u));
+
+    const result = normalized.result.users;
+
+    return {entities, result}
+};
 

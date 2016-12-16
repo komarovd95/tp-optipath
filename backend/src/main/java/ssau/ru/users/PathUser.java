@@ -1,10 +1,12 @@
 package ssau.ru.users;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ssau.ru.DomainObject;
+import ssau.ru.cars.Car;
 import ssau.ru.graph.PathGraph;
 
 import javax.persistence.*;
@@ -38,6 +40,9 @@ public class PathUser extends DomainObject<Long> {
 
     @Enumerated(EnumType.STRING)
     private DriveStyle driveStyle;
+
+    @ManyToMany
+    private List<Car> ownCars;
 
     public PathUser() {
         this.setRoles(new String[] {"ROLE_USER"});
@@ -88,5 +93,23 @@ public class PathUser extends DomainObject<Long> {
 
     public void setDriveStyle(DriveStyle driveStyle) {
         this.driveStyle = driveStyle;
+    }
+
+    public List<Car> getOwnCars() {
+        return ownCars;
+    }
+
+    public void setOwnCars(List<Car> cars) {
+        this.ownCars = cars;
+    }
+
+    @JsonProperty("routes")
+    public int getRoutesCount() {
+        return pathGraphs == null ? 0 : pathGraphs.size();
+    }
+
+    @JsonProperty("cars")
+    public int getCarsCount() {
+        return ownCars == null ? 0 : ownCars.size();
     }
 }

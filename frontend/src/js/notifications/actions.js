@@ -24,3 +24,9 @@ export const createGlobalErrorAction = actionType => payload => ({
 });
 
 export const resetNotification = createAction(RESET);
+
+export const createLoggedErrorAction = actionType => payload => ({
+    type: actionType,
+    payload: payload,
+    logged: true
+});

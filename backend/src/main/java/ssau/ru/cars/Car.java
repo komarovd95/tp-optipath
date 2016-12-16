@@ -1,6 +1,7 @@
 package ssau.ru.cars;
 
 import ssau.ru.DomainObject;
+import ssau.ru.users.PathUser;
 
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -8,6 +9,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Entity
 @Table(name = "CARS", uniqueConstraints =
@@ -37,6 +39,9 @@ public class Car extends DomainObject<Long> {
     @Column(name = "fuel_consumption", nullable = false)
     @NotNull @Min(0)
     private Double fuelConsumption;
+
+    @ManyToMany(mappedBy = "ownCars", cascade = CascadeType.DETACH)
+    private List<PathUser> owners;
 
     @Override
     public Long getId() {
@@ -83,11 +88,26 @@ public class Car extends DomainObject<Long> {
         this.fuelConsumption = fuelConsumption;
     }
 
+    public List<PathUser> getOwners() {
+        return owners;
+    }
+
+    public void setOwners(List<PathUser> owners) {
+        this.owners = owners;
+    }
+
     public String getBrandName() {
         return brand.getBrandName();
     }
 
     public String getFuelTypeName() {
         return fuelType.getFuelTypeName();
+    }
+
+    @PreRemove
+    private void preRemove() {
+        for (PathUser user : owners) {
+            user.getOwnCars().remove(this);
+        }
     }
 }

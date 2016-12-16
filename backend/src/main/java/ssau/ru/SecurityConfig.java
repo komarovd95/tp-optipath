@@ -46,9 +46,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 //.addFilterBefore(new CORSFilter(), ChannelProcessingFilter.class)
                 .httpBasic().and()
-                .logout()
-                    .logoutRequestMatcher(new AntPathRequestMatcher("/signout"))
-                    .permitAll().and()
+//                .logout()
+//                    .logoutRequestMatcher(new AntPathRequestMatcher("/signout"))
+//                    .permitAll().and()
                 .authorizeRequests()
                     .antMatchers(PATHS).permitAll()
                     .antMatchers("/api/users/user").authenticated()
