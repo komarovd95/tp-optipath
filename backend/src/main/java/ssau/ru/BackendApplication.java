@@ -74,17 +74,20 @@ public class BackendApplication implements CommandLineRunner {
         PathGraph graph = new PathGraph("graph1");
         graph.setOwner(user);
 
-        PathNode node = new PathNode(graph, new PathNode.PathLight(15, 20), new PathNode.NodePosition(100, 10));
-        graph.addNode(node);
-        node.setGraph(graph);
-
-        PathNode node1 = new PathNode(graph, new PathNode.PathLight(15, 15), new PathNode.NodePosition(100, 100));
-        graph.addNode(node1);
-        node1.setGraph(graph);
-
-        PathNode node2 = new PathNode(graph, null, new PathNode.NodePosition(100, 150));
-        graph.addNode(node2);
-        node2.setGraph(graph);
+//        PathNode node = new PathNode();
+//        node.setPosition(new PathNode.NodePosition(100, 150));
+//        graph.addNode(node);
+//        node.setGraph(graph);
+//
+//        PathNode node1 = new PathNode();
+//        node1.setPosition(new PathNode.NodePosition(200, 250));
+//        graph.addNode(node1);
+//        node1.setGraph(graph);
+//
+//        PathNode node2 = new PathNode();
+//        node2.setPosition(new PathNode.NodePosition(250, 350));
+//        graph.addNode(node2);
+//        node2.setGraph(graph);
 
         CoverType coverType = new CoverType();
         coverType.setCoverTypeName("Breakstone");
@@ -97,34 +100,34 @@ public class BackendApplication implements CommandLineRunner {
         Street street = new Street();
         street.setStreetType("улица");
         street.setStreetName("Ленина");
+//
+//        PathEdge edge = new PathEdge(graph, node, node1);
+//        edge.setCoverType(coverType);
+//        edge.setLimit(60);
+//        edge.setLength(100);
+//        edge.setStreet(street);
+//        edge.setLanes(3);
+//        graph.addEdge(edge);
+//        edge.setGraph(graph);
 
-        PathEdge edge = new PathEdge(graph, node, node1);
-        edge.setCoverType(coverType);
-        edge.setLimit(60);
-        edge.setLength(100);
-        edge.setStreet(street);
-        edge.setLanes(3);
-        graph.addEdge(edge);
-        edge.setGraph(graph);
-
-        PathEdge edge1 = new PathEdge(graph, node1, node2);
-        edge1.setCoverType(coverType);
-        edge1.setLimit(110);
-        edge1.setLength(100);
-        edge1.setDirected(true);
-        edge1.setLanes(4);
-        graph.addEdge(edge1);
-        edge1.setGraph(graph);
+//        PathEdge edge1 = new PathEdge(graph, node1, node2);
+//        edge1.setCoverType(coverType);
+//        edge1.setLimit(110);
+//        edge1.setLength(100);
+//        edge1.setDirected(true);
+//        edge1.setLanes(4);
+//        graph.addEdge(edge1);
+//        edge1.setGraph(graph);
 
         userRepository.save(user);
         coverTypeRepository.save(coverType);
         coverTypeRepository.save(cT);
         streetRepository.save(street);
         graphRepository.save(graph);
-        nodeRepository.save(node);
-        nodeRepository.save(node1);
-        edgeRepository.save(edge);
-        edgeRepository.save(edge1);
+//        nodeRepository.save(node);
+//        nodeRepository.save(node1);
+//        edgeRepository.save(edge);
+//        edgeRepository.save(edge1);
 
 //        List<PathUser> users = new ArrayList<>();
 //
