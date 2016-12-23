@@ -4,10 +4,11 @@ import ssau.ru.DomainObject;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "COVER_TYPES")
-public class CoverType extends DomainObject<Long> {
+public class CoverType extends DomainObject<Long> implements Serializable {
     @Id @GeneratedValue
     private Long id;
 

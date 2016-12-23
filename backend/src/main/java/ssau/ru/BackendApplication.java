@@ -14,18 +14,21 @@ import ssau.ru.users.DriveStyle;
 import ssau.ru.users.PathUser;
 import ssau.ru.users.PathUserRepository;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 @SpringBootApplication
 @EnableCaching
 public class BackendApplication implements CommandLineRunner {
     @Autowired
     public BackendApplication(PathUserRepository userRepository, PathGraphRepository graphRepository,
-                              PathNodeRepository nodeRepository, PathEdgeRepository edgeRepository,
+//                              PathNodeRepository nodeRepository, PathEdgeRepository edgeRepository,
                               CarRepository carRepository, CarBrandRepository carBrandRepository,
                               FuelTypeRepository fuelTypeRepository, CoverTypeRepository coverTypeRepository, StreetRepository streetRepository) {
         this.userRepository = userRepository;
         this.graphRepository = graphRepository;
-        this.nodeRepository = nodeRepository;
-        this.edgeRepository = edgeRepository;
+//        this.nodeRepository = nodeRepository;
+//        this.edgeRepository = edgeRepository;
         this.carRepository = carRepository;
         this.carBrandRepository = carBrandRepository;
         this.fuelTypeRepository = fuelTypeRepository;
@@ -42,9 +45,9 @@ public class BackendApplication implements CommandLineRunner {
 
     private final PathGraphRepository graphRepository;
 
-    private final PathNodeRepository nodeRepository;
-
-    private final PathEdgeRepository edgeRepository;
+//    private final PathNodeRepository nodeRepository;
+//
+//    private final PathEdgeRepository edgeRepository;
 
     private final CarBrandRepository carBrandRepository;
 
@@ -71,8 +74,54 @@ public class BackendApplication implements CommandLineRunner {
 
         userRepository.save(user);
 
-        PathGraph graph = new PathGraph("graph1");
+        PathGraph graph = new PathGraph();
+        graph.setName("graph1");
         graph.setOwner(user);
+
+
+        PathNode node1 = new PathNode();
+        node1.setId("node1");
+        node1.setX(100);
+        node1.setY(150);
+
+
+        PathLight light1 = new PathLight();
+        light1.setRedPhase(30);
+        light1.setGreenPhase(90);
+
+        node1.setLight(light1);
+
+
+        PathNode node2 = new PathNode();
+        node2.setId("node2");
+        node2.setX(200);
+        node2.setY(250);
+
+
+        CoverType coverType = new CoverType();
+        coverType.setCoverTypeName("Breakstone");
+        coverType.setSlowdown(0.87);
+
+        CoverType cT = new CoverType();
+        cT.setCoverTypeName("Asphalt");
+        cT.setSlowdown(0.56);
+
+        Street street = new Street();
+        street.setStreetType("улица");
+        street.setStreetName("Ленина");
+
+
+        PathEdge edge = new PathEdge();
+        edge.setId("edge1");
+        edge.setFrom("node1");
+        edge.setTo("node2");
+        edge.setLimit(60);
+        edge.setLength(100);
+        edge.setStreet(street);
+        edge.setCoverType(coverType);
+
+        graph.setNodes(Arrays.asList(node1, node2));
+        graph.setEdges(Collections.singletonList(edge));
 
 //        PathNode node = new PathNode();
 //        node.setPosition(new PathNode.NodePosition(100, 150));
@@ -89,17 +138,7 @@ public class BackendApplication implements CommandLineRunner {
 //        graph.addNode(node2);
 //        node2.setGraph(graph);
 
-        CoverType coverType = new CoverType();
-        coverType.setCoverTypeName("Breakstone");
-        coverType.setSlowdown(0.87);
 
-        CoverType cT = new CoverType();
-        cT.setCoverTypeName("Asphalt");
-        cT.setSlowdown(0.56);
-
-        Street street = new Street();
-        street.setStreetType("улица");
-        street.setStreetName("Ленина");
 //
 //        PathEdge edge = new PathEdge(graph, node, node1);
 //        edge.setCoverType(coverType);
@@ -162,5 +201,8 @@ public class BackendApplication implements CommandLineRunner {
 //        street1.setType(PathStreet.StreetType.STREET);
 //
 //        pathStreetRepository.save(street1);
+
+//        PathGraph fetchedGraph = graphRepository.findOne(1L);
+//        System.out.println(fetchedGraph.getNodes());
     }
 }

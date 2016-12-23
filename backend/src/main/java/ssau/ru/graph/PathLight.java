@@ -4,15 +4,16 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.io.Serializable;
 
-@Embeddable
-public class PathLight {
-    @Column(name = "red_phase")
+//@Embeddable
+public class PathLight implements Serializable {
+//    @Column(name = "red_phase")
     @Min(15) @Max(150)
     int redPhase;
 
-    @Column(name = "green_phase")
-    @Min(15) @Max(90)
+//    @Column(name = "green_phase")
+    @Min(15) @Max(120)
     int greenPhase;
 
 //        public PathLight() {}

@@ -26,28 +26,29 @@ public class PathGraph extends DomainObject<Long> {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "graph_owner")
-//    @JsonIgnore
     private PathUser owner;
 
-    @OneToMany(mappedBy = "graph", cascade = CascadeType.ALL)
-//    @Size(min = 2)
-    @Valid
+//    @OneToMany(mappedBy = "graph", cascade = CascadeType.ALL)
+//     TODO
+    @Column(name = "nodes", length = 65536)
+    @Valid @Size(min = 2)
     private List<PathNode> nodes;
 
-    @OneToMany(mappedBy = "graph", cascade = CascadeType.ALL)
-//    @Size(min = 1)
-    @Valid
+//    @OneToMany(mappedBy = "graph", cascade = CascadeType.ALL)
+//
+    @Column(name = "edges", length = 65536)
+    @Valid @Size(min = 1)
     private List<PathEdge> edges;
 
-    public PathGraph() {
-        nodes = new ArrayList<>();
-        edges = new ArrayList<>();
-    }
-
-    public PathGraph(String name) {
-        this();
-        this.name = name;
-    }
+//    public PathGraph() {
+//        nodes = new ArrayList<>();
+//        edges = new ArrayList<>();
+//    }
+//
+//    public PathGraph(String name) {
+//        this();
+//        this.name = name;
+//    }
 
     public Long getId() {
         return id;

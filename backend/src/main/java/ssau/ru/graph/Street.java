@@ -5,11 +5,12 @@ import ssau.ru.DomainObject;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "STREETS", uniqueConstraints =
     @UniqueConstraint(columnNames = {"street_name", "street_type"}))
-public class Street extends DomainObject<Long> {
+public class Street extends DomainObject<Long> implements Serializable {
     @Id @GeneratedValue
     private Long id;
 

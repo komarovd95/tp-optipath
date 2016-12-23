@@ -1,87 +1,65 @@
 package ssau.ru.graph;
 
-import com.fasterxml.jackson.annotation.*;
-
-import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
-@Entity
-@Table(name = "EDGES")
-public class PathEdge {
-    @Id @GeneratedValue
-    private Long id;
+public class PathEdge implements Serializable {
+    @NotNull
+    private String id;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "edge_from")
-    private PathNode from;
+    @NotNull
+    private String from;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "edge_to")
-    private PathNode to;
+    @NotNull
+    private String to;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "graph_owner")
-    @JsonIgnore
-    private PathGraph graph;
+    private boolean directed;
 
-    @Column(name = "edge_length")
     @Min(100) @Max(50000)
     private int length;
 
-    @Column(name = "edge_lanes")
-    @Min(1) @Max(10)
-    private int lanes;
-
-    @Column(name = "edge_limit")
-    @Min(1) @Max(120)
+    @Min(20) @Max(110)
     private int limit;
 
-    @ManyToOne
+    @NotNull
     private CoverType coverType;
 
-    @ManyToOne
+    @NotNull
     private Street street;
 
-    @Column(name = "edge_directed")
-    private boolean directed;
 
-    public PathEdge() {}
-
-    public PathEdge(PathGraph graph, PathNode from, PathNode to) {
-        this.graph = graph;
-        this.from = from;
-        this.to = to;
-    }
-
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    @JsonIgnore
-    public PathNode getFrom() {
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getFrom() {
         return from;
     }
 
-    public void setFrom(PathNode from) {
+    public void setFrom(String from) {
         this.from = from;
     }
 
-    @JsonIgnore
-    public PathNode getTo() {
+    public String getTo() {
         return to;
     }
 
-    public void setTo(PathNode to) {
+    public void setTo(String to) {
         this.to = to;
     }
 
-    public PathGraph getGraph() {
-        return graph;
+    public boolean isDirected() {
+        return directed;
     }
 
-    public void setGraph(PathGraph graph) {
-        this.graph = graph;
+    public void setDirected(boolean directed) {
+        this.directed = directed;
     }
 
     public int getLength() {
@@ -92,12 +70,12 @@ public class PathEdge {
         this.length = length;
     }
 
-    public int getLanes() {
-        return lanes;
+    public int getLimit() {
+        return limit;
     }
 
-    public void setLanes(int lanes) {
-        this.lanes = lanes;
+    public void setLimit(int limit) {
+        this.limit = limit;
     }
 
     public CoverType getCoverType() {
@@ -114,31 +92,5 @@ public class PathEdge {
 
     public void setStreet(Street street) {
         this.street = street;
-    }
-
-    public int getLimit() {
-        return limit;
-    }
-
-    public void setLimit(int limit) {
-        this.limit = limit;
-    }
-
-    public boolean isDirected() {
-        return directed;
-    }
-
-    public void setDirected(boolean directed) {
-        this.directed = directed;
-    }
-
-    @JsonProperty("from")
-    public Long getFromId() {
-        return from == null ? null : from.getId();
-    }
-
-    @JsonProperty("to")
-    public Long getToId() {
-        return to == null ? null : to.getId();
     }
 }
